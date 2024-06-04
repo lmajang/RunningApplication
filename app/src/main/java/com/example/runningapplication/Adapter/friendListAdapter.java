@@ -1,5 +1,7 @@
 package com.example.runningapplication.Adapter;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,12 +14,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.runningapplication.R;
 import com.example.runningapplication.entity.friendEntity;
+import com.example.runningapplication.runningChat.chatActivity;
 
 import java.util.List;
 
 public class friendListAdapter extends RecyclerView.Adapter<friendListAdapter.viewHolder> {
 
     List<friendEntity> friendList;
+    private Context mContext;
 
     public friendListAdapter(List<friendEntity> friendList){
         this.friendList = friendList;
@@ -26,6 +30,8 @@ public class friendListAdapter extends RecyclerView.Adapter<friendListAdapter.vi
     @NonNull
     @Override
     public viewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        mContext = parent.getContext();
+
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.friend_layout, parent, false);
 
         return new viewHolder(view);
@@ -37,6 +43,16 @@ public class friendListAdapter extends RecyclerView.Adapter<friendListAdapter.vi
         holder.friend_hp.setImageResource(friend.getFriend_hpId());
         holder.username.setText(friend.getUsername());
         holder.firstChat.setText(friend.getFirstChat());
+        holder.chatBtn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setClass(mContext, chatActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("data", friend);
+                mContext.startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -50,12 +66,14 @@ public class friendListAdapter extends RecyclerView.Adapter<friendListAdapter.vi
         private TextView username;
         private TextView firstChat;
 
+        private TextView chatBtn;
+
         public viewHolder(@NonNull View itemView) {
             super(itemView);
             friend_hp = (ImageView) itemView.findViewById(R.id.friend_hp);
             username = (TextView) itemView.findViewById(R.id.username);
             firstChat = (TextView) itemView.findViewById(R.id.first_chat);
-
+            chatBtn = (TextView) itemView.findViewById(R.id.chat_btn);
         }
     }
 }

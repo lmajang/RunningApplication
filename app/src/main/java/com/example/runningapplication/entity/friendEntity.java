@@ -1,13 +1,18 @@
 package com.example.runningapplication.entity;
 
-public class friendEntity {
+import java.io.Serializable;
+
+public class friendEntity implements Serializable {
+    private String id;
+
     private int friend_hpId;
     private String username;
     private String firstChat;
     private boolean clickStatus;
 
-    public friendEntity(int friend_hpId, String username, String firstChat, boolean clickStatus){
+    public friendEntity(int friend_hpId, String id, String username, String firstChat, boolean clickStatus){
         this.friend_hpId = friend_hpId;
+        this.id = id;
         this.username = username;
         this.firstChat = firstChat;
         this.clickStatus = clickStatus;
@@ -27,5 +32,9 @@ public class friendEntity {
 
     public String getFirstChat() {
         return firstChat;
+    }
+
+    public String getId() {
+        return id;
     }
 }

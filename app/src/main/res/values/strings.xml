@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">RunningApplication</string>
+    <string name="title_activity_running_main">runningMainActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_calendar">Calendar</string>
+    <string name="title_friend_list">friendList</string>
+
 </resources>

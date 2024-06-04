@@ -1,6 +1,7 @@
 package com.example.runningapplication.runningChat;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -20,6 +21,7 @@ import com.example.runningapplication.chatClient.Client;
 import com.example.runningapplication.chatClient.chatPackage;
 import com.example.runningapplication.chatClient.sendClient;
 import com.example.runningapplication.entity.chatEntity;
+import com.example.runningapplication.entity.friendEntity;
 
 import org.json.simple.JSONObject;
 import org.w3c.dom.Text;
@@ -33,6 +35,8 @@ public class chatActivity extends Activity {
     private static chatAdapter adapter;
     private EditText msg;
     private TextView sendBtn;
+
+    private String TAG = "chatActivity";
 
     public static Handler mainHandler = new Handler(){
         @Override
@@ -50,6 +54,10 @@ public class chatActivity extends Activity {
         initRecycle();
         msg = findViewById(R.id.send_msg);
         sendBtn = findViewById(R.id.send_msg_btn);
+
+        Intent intent = getIntent();
+        friendEntity friend= (friendEntity) intent.getSerializableExtra("data");
+        Log.d(TAG, friend.getUsername());
 //        发送监听器
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,7 +65,7 @@ public class chatActivity extends Activity {
                 String messageText = msg.getText().toString();
                 if(!messageText.isEmpty()){
                     Log.d("Massage",messageText);
-                    chatPackage chatPackage = new chatPackage(messageText, Client.getUserId(), "1234");
+                    chatPackage chatPackage = new chatPackage(messageText, Client.getUserId(), friend.getId());
                     JSONObject json = chatPackage.getChatPackage();
                     Log.d("json", json.toJSONString());
                     Client.sendclient.sendChatHandler.obtainMessage(1,json).sendToTarget();

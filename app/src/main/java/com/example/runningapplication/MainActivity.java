@@ -4,10 +4,9 @@ package com.example.runningapplication;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.example.runningapplication.chatClient.Client;
-import com.example.runningapplication.runningChat.chatActivity;
+import com.example.runningapplication.runningMain.runningMainActivity;
 import com.example.runningapplication.runningMap.mapActivity;
 
 public class MainActivity extends Activity {
@@ -27,7 +26,7 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
 
-        Intent i = new Intent(MainActivity.this, chatActivity.class);
+        Intent i = new Intent(MainActivity.this, runningMainActivity.class);
         startActivity(i);
 
 //        Intent i = new Intent(MainActivity.this, mapActivity.class);

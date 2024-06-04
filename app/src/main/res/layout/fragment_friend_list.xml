@@ -4,12 +4,16 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
     <EditText
+        android:id="@+id/search_friend"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:drawableStart="@drawable/icon_search"
-        android:drawablePadding="5dp" />
+        android:drawablePadding="5dp"
+        android:imeOptions="actionSearch"
+        android:inputType="text"
+        android:singleLine="true"/>
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/chat_recyclerView"
+        android:id="@+id/friend_recyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />

@@ -1,33 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
-    <!--允许访问网络，必选权限-->
-    <uses-permission android:name="android.permission.INTERNET" />
-
-    <!--允许获取粗略位置，若用GPS实现定位小蓝点功能则必选-->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
-    <!--允许获取网络状态，用于网络定位，若无gps但仍需实现定位小蓝点功能则此权限必选-->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
-    <!--用于访问GPS定位-->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
-    <!--允许获取wifi网络信息，用于网络定位，若无gps但仍需实现定位小蓝点功能则此权限必选-->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-
-    <!--允许获取wifi状态改变，用于网络定位，若无gps但仍需实现定位小蓝点功能则此权限必选-->
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-
-    <!--用于申请调用A-GPS模块-->
-    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
-
-    <!--允许程序设置内置sd卡的写权限-->
+    <!-- 允许访问网络，必选权限 -->
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- 允许获取粗略位置，若用GPS实现定位小蓝点功能则必选 -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- 允许获取网络状态，用于网络定位，若无gps但仍需实现定位小蓝点功能则此权限必选 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- 用于访问GPS定位 -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- 允许获取wifi网络信息，用于网络定位，若无gps但仍需实现定位小蓝点功能则此权限必选 -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- 允许获取wifi状态改变，用于网络定位，若无gps但仍需实现定位小蓝点功能则此权限必选 -->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" /> <!-- 用于申请调用A-GPS模块 -->
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" /> <!-- 允许程序设置内置sd卡的写权限 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
-
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -50,17 +33,13 @@
         </activity>
         <activity android:name=".runningMap.mapActivity" />
         <activity android:name=".runningChat.chatActivity" />
-        <service android:name=".runningMap.locationService"
-            android:foregroundServiceType="location"/>
+        <activity android:name=".runningFriend.friendActivity" />
+        <activity android:name=".runningMain.runningMainActivity"/>
         <service android:name="com.amap.api.location.APSService" />
+
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="9e147c66023101c45d858fb42a62e301"/>
-
-
-
+            android:value="9e147c66023101c45d858fb42a62e301" />
     </application>
-
-
 
 </manifest>
