@@ -1,22 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".runningMain.ui.home.HomeFragment">
+    android:orientation="vertical"
+    tools:context=".Login.LoginActivity">
 
-    <TextView
-        android:id="@+id/text_home"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#65C294"
+            android:gravity="bottom|center"
+            android:paddingBottom="15dp"
+            android:text="主页"
+            android:textColor="#FFFFFB"
+            android:textSize="24sp"
+            tools:ignore="DuplicateIds" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:gravity="bottom|center"
+            android:paddingBottom="15dp"
+            android:text="生命在于运动"
+            android:textColor="@color/greenyellow"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="197dp"
+        android:orientation="horizontal">
+
+        <com.example.runningapplication.View.CircularStatView
+            android:id="@+id/circularStatView"
+            android:layout_width="222dp"
+            android:layout_height="match_parent" />
+                <TextView
+                    android:id="@+id/text"
+                    android:layout_width="320dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center|left"
+                    android:textStyle="bold"
+                    android:text="当前已跑\n:公里/公里" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="115dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="130dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/btn_yuanjiao"
+            android:gravity="center"
+            android:text="跑！"
+            android:textColor="@color/white"
+            android:textSize="30dp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="375dp"
+        android:orientation="horizontal">
+
+        <com.example.runningapplication.View.Weather
+            android:id="@+id/Weather"
+            android:layout_width="185dp"
+            android:layout_height="181dp" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="224dp"
+            android:layout_height="183dp"
+            android:gravity="center|left"
+            android:text="当前天气:\n当前气温:\n天气状况:\n空气质量:"
+             />
+    </LinearLayout>
+</LinearLayout>

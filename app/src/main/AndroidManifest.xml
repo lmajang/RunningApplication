@@ -21,7 +21,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.RunningApplication"
-        tools:targetApi="31">
+        tools:targetApi="31"
+        android:usesCleartextTraffic="true" >
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -33,13 +34,16 @@
         </activity>
         <activity android:name=".runningMap.mapActivity" />
         <activity android:name=".runningChat.chatActivity" />
+        <activity android:name=".Login.LoginActivity"  />
+        <activity android:name=".Login.RegisterActivity"/>
+        <activity android:name=".Login.ForgetActivity"/>
+
         <activity android:name=".runningFriend.friendActivity" />
         <activity android:name=".runningMain.runningMainActivity"/>
         <service android:name="com.amap.api.location.APSService" />
-
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="9e147c66023101c45d858fb42a62e301" />
+            android:value="9e147c66023101c45d858fb42a62e301"/>
     </application>
 
 </manifest>
