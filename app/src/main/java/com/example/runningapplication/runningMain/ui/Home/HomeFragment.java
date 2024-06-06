@@ -24,10 +24,12 @@ import com.google.gson.Gson;
 import com.qweather.sdk.bean.base.Code;
 import com.qweather.sdk.bean.base.Lang;
 import com.qweather.sdk.bean.base.Unit;
+import com.qweather.sdk.bean.geo.GeoBean;
 import com.qweather.sdk.bean.weather.WeatherNowBean;
 import com.qweather.sdk.view.HeConfig;
 import com.qweather.sdk.view.QWeather;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -49,7 +51,7 @@ public class HomeFragment extends Fragment {
     private View view;
     SharedPreferences sp;
     String target="",run="";
-    String tianqi1 = null, wendu = null, shidu = null;
+    String citycode = "",tianqi1 = null, wendu = null, shidu = null;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -131,51 +133,81 @@ public class HomeFragment extends Fragment {
                 view.getContext().startActivity(intent);
             }
         });
+        getCitycode();
         getWeather();
     }
     private void initWeather() {
         HeConfig.init("HE2406050032451879","2b1977f5e1ec4cbdb28d7ae8c7216c54");
         HeConfig.switchToDevService();
     }
+    private void getCitycode(){
+        QWeather.getGeoCityLookup(view.getContext(), "120.04,30.23",new QWeather.OnResultGeoListener(){
+
+            @Override
+            public void onError(Throwable throwable) {
+                Log.i("123", "Weather Now onError: ");
+            }
+
+            @Override
+            public void onSuccess(GeoBean geoBean) {
+                String jsonCity = new Gson().toJson(geoBean.getLocationBean());
+                Log.i("123123", " Weather Now onSuccess: " + jsonCity);
+                try{
+                    JSONArray jsonArray = new JSONArray(jsonCity);
+                    JSONObject jsonObject = jsonArray.getJSONObject(0);
+                    citycode=jsonObject.getString("id");
+                    Log.i("123123123", citycode);
+                }catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
     private void getWeather() {
-
-        QWeather.getWeatherNow(view.getContext(), "101210101"/*CN+中国城市代码*/,
-                Lang.ZH_HANS, Unit.METRIC,
-                new QWeather.OnResultWeatherNowListener() {
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.i("123", "Weather Now onError: ", e);
-                    }
-
-                    @Override
-                    public void onSuccess(WeatherNowBean weatherBean) {
-                        String jsonData = new Gson().toJson(weatherBean);
-                        Log.i("123", " Weather Now onSuccess: " + jsonData);
-                        if (Code.OK == weatherBean.getCode()) {
-                            String JsonNow = new Gson().toJson(weatherBean.getNow());
-                            String JsonBasic = new Gson().toJson(weatherBean.getBasic());
-                            JSONObject jsonObject = null;
-                            JSONObject jsonObject2 = null;
-                            try {
-                                jsonObject = new JSONObject(JsonNow);
-                                jsonObject2 = new JSONObject(JsonBasic);
-                                tianqi1 = jsonObject.getString("text");
-                                wendu = jsonObject.getString("temp");
-                                shidu = jsonObject.getString("humidity");
-                                tianqi.setText("当前天气:"+tianqi1+"\n当前气温:"+wendu+"℃\n当前湿度:"+shidu);
-                                if(tianqi1.contains("阴")) weather.setCenterImage(BitmapFactory.decodeResource(getResources(),R.drawable.yin));
-                                if(tianqi1.contains("云")) weather.setCenterImage(BitmapFactory.decodeResource(getResources(),R.drawable.cloud));
-                                if(tianqi1.contains("晴")) weather.setCenterImage(BitmapFactory.decodeResource(getResources(),R.drawable.sun));
-                                if(tianqi1.contains("雨")) weather.setCenterImage(BitmapFactory.decodeResource(getResources(),R.drawable.rain));
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(citycode.equals("")){}
+                QWeather.getWeatherNow(view.getContext(), citycode,//"101210101"/*CN+中国城市代码*/,
+                        Lang.ZH_HANS, Unit.METRIC,
+                        new QWeather.OnResultWeatherNowListener() {
+                            @Override
+                            public void onError(Throwable e) {
+                                Log.i("123", "Weather Now onError: ", e);
                             }
-                        } else {
-                            Log.i("123", "有错误");
-                            return;
-                        }
-                    }
-                });
+
+                            @Override
+                            public void onSuccess(WeatherNowBean weatherBean) {
+                                String jsonData = new Gson().toJson(weatherBean);
+                                Log.i("123", " Weather Now onSuccess: " + jsonData);
+                                if (Code.OK == weatherBean.getCode()) {
+                                    String JsonNow = new Gson().toJson(weatherBean.getNow());
+                                    String JsonBasic = new Gson().toJson(weatherBean.getBasic());
+                                    JSONObject jsonObject = null;
+                                    JSONObject jsonObject2 = null;
+                                    try {
+                                        jsonObject = new JSONObject(JsonNow);
+                                        jsonObject2 = new JSONObject(JsonBasic);
+                                        tianqi1 = jsonObject.getString("text");
+                                        wendu = jsonObject.getString("temp");
+                                        shidu = jsonObject.getString("humidity");
+                                        tianqi.setText("当前天气:"+tianqi1+"\n当前气温:"+wendu+"℃\n当前湿度:"+shidu);
+                                        if(tianqi1.contains("阴")) weather.setCenterImage(BitmapFactory.decodeResource(getResources(),R.drawable.yin));
+                                        if(tianqi1.contains("云")) weather.setCenterImage(BitmapFactory.decodeResource(getResources(),R.drawable.cloud));
+                                        if(tianqi1.contains("晴")) weather.setCenterImage(BitmapFactory.decodeResource(getResources(),R.drawable.sun));
+                                        if(tianqi1.contains("雨")) weather.setCenterImage(BitmapFactory.decodeResource(getResources(),R.drawable.rain));
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                } else {
+                                    Log.i("123", "有错误");
+                                    return;
+                                }
+                            }
+                        });
+            }
+        }).start();
+
     }
     public void avatarchange(String avatarnum){
         if(avatarnum.equals("1")) circularStatView.setCenterImage(BitmapFactory.decodeResource(getResources(),R.drawable.avatar1));
