@@ -1,40 +1,51 @@
 package com.example.runningapplication.entity;
 
+import androidx.annotation.NonNull;
+
 import java.io.Serializable;
+
+
 
 public class friendEntity implements Serializable {
     private String id;
-
-    private int friend_hpId;
+    private String friend_hpId;
     private String username;
-    private String firstChat;
-    private boolean clickStatus;
 
-    public friendEntity(int friend_hpId, String id, String username, String firstChat, boolean clickStatus){
-        this.friend_hpId = friend_hpId;
+
+    public friendEntity(){}
+
+    public friendEntity(String id,String friend_hpId,String username){
         this.id = id;
+        this.friend_hpId = friend_hpId;
         this.username = username;
-        this.firstChat = firstChat;
-        this.clickStatus = clickStatus;
+    }
+    public String getId() {
+        return id;
+    }
+
+    public String getFriend_hpId() {
+        return friend_hpId;
     }
 
     public String getUsername() {
         return username;
     }
 
-    public boolean isClickStatus() {
-        return clickStatus;
+    public void setFriend_hpId(String friend_hpId) {
+        this.friend_hpId = friend_hpId;
     }
 
-    public int getFriend_hpId() {
-        return friend_hpId;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public String getFirstChat() {
-        return firstChat;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public String getId() {
-        return id;
+    @NonNull
+    @Override
+    public String toString() {
+        return super.toString();
     }
 }

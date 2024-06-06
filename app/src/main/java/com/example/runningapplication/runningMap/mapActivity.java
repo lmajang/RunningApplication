@@ -11,9 +11,11 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Chronometer;
 import android.widget.LinearLayout;
@@ -36,7 +38,9 @@ import com.amap.api.maps2d.model.LatLng;
 import com.amap.api.maps2d.model.MyLocationStyle;
 
 import com.amap.api.maps2d.model.PolylineOptions;
+import com.dinuscxj.progressbar.CircleProgressBar;
 import com.example.runningapplication.R;
+import com.example.runningapplication.View.CircularStatView;
 import com.example.runningapplication.utils.mapTools;
 
 import java.text.SimpleDateFormat;
@@ -57,7 +61,7 @@ public class mapActivity extends Activity implements LocationSource, AMapLocatio
 
     private TextView runningPauseBtn;
 
-    private TextView runningEndBtn;
+    private CircleProgressBar runningEndBtn;
 
     private Chronometer passTime;
 
@@ -71,6 +75,8 @@ public class mapActivity extends Activity implements LocationSource, AMapLocatio
     private float avgSpeed = 0;
 
     private long allTime = 0;
+
+    private long firstDownTime = 0;
     private List<LatLng> latLngs = new ArrayList<LatLng>();
 
     private boolean runState = false;
@@ -83,6 +89,43 @@ public class mapActivity extends Activity implements LocationSource, AMapLocatio
 
     private boolean permissionStatus = false;
 
+    private long downTime;
+    private static final int LONG_PRESS_THRESHOLD = 5000;//长按时间
+
+    private static final class MyProgressFormatter implements CircleProgressBar.ProgressFormatter {
+        private static final String DEFAULT_PATTERN = "结束";
+        @Override
+        public CharSequence format(int progress, int max) {
+            return String.format(DEFAULT_PATTERN, (int) ((float) progress / (float) max));
+        }
+    }
+
+    private Handler handler = new Handler();
+
+    private Runnable longPressRunnable = new Runnable() {
+        @Override
+        public void run() {
+            // 处理长按事件
+            Log.d("CustomLongPress", "Long press detected!");
+            runningBtns.setVisibility(View.GONE);
+            runState = false;
+            passTime.stop();
+
+
+        }
+    };
+
+    private Runnable updateProgressRunnable = new Runnable() {
+        @Override
+        public void run() {
+            // 处理长按事件
+            Log.d("updateProgress","更新进度");
+            downTime = System.currentTimeMillis();
+            Log.d(TAG,Long.toString((downTime - firstDownTime)));
+            runningEndBtn.setProgress((int)(downTime - firstDownTime));
+            handler.postDelayed(this,100);
+        }
+    };
 
     private String[] permissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION
             , Manifest.permission.ACCESS_COARSE_LOCATION
@@ -224,7 +267,9 @@ public class mapActivity extends Activity implements LocationSource, AMapLocatio
                         +aMapLocation.getCountry()
                         +aMapLocation.getProvince()
                         +aMapLocation.getCity()
-                        +aMapLocation.getDistrict();
+                        +aMapLocation.getDistrict()
+                        +"code:"
+                        +aMapLocation.getAdCode();
 
                 Log.d(TAG, now_addr);
                 if(runState){
@@ -259,6 +304,7 @@ public class mapActivity extends Activity implements LocationSource, AMapLocatio
     }
 
     private void init(){
+
         mPolylineOptions = new PolylineOptions();
         runningStartBtn = (TextView) findViewById(R.id.running_start_btn);
 
@@ -268,7 +314,7 @@ public class mapActivity extends Activity implements LocationSource, AMapLocatio
 
         runningPauseBtn = (TextView) findViewById(R.id.running_pause_btn);
 
-        runningEndBtn = (TextView) findViewById(R.id.running_end_btn);
+        runningEndBtn = (CircleProgressBar) findViewById(R.id.running_end_btn);
 
         passTime = (Chronometer) findViewById(R.id.cm_passtime);
 
@@ -276,8 +322,12 @@ public class mapActivity extends Activity implements LocationSource, AMapLocatio
 
         tvSpeed = (TextView) findViewById(R.id.tvSpeed);
 
+        runningEndBtn.setProgressFormatter(new MyProgressFormatter());
+
+        runningEndBtn.setMax(LONG_PRESS_THRESHOLD);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void initAddListeners(){
         runningStartBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -307,11 +357,46 @@ public class mapActivity extends Activity implements LocationSource, AMapLocatio
                 }
             }
         });
+
+
+        runningEndBtn.setOnTouchListener(new View.OnTouchListener() {
+
+
+            boolean isFirstDown = true;
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        if (isFirstDown) firstDownTime = System.currentTimeMillis();
+                        isFirstDown = false;
+                        Log.d(TAG,"Down");
+                        handler.postDelayed(longPressRunnable, LONG_PRESS_THRESHOLD); //保持按下状态指定时间回调
+                        updateProgress();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        runningEndBtn.setProgress(0);
+                        handler.removeCallbacks(longPressRunnable);
+                        handler.removeCallbacks(updateProgressRunnable);
+                        downTime = 0;
+                        isFirstDown = true;
+                        firstDownTime = 0;
+                        break;
+                }
+                return true;
+            }
+        });
     }
 
     private void drawPathLine(LatLng nowLatLng){
         latLngs.add(nowLatLng);
         aMap.addPolyline(new PolylineOptions().
                 addAll(latLngs).width(10).color(Color.argb(255, 1, 1, 1)));
+    }
+
+    private void updateProgress(){
+        // 开始更新进度
+        handler.post(updateProgressRunnable);
+
     }
 }

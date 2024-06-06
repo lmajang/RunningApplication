@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.example.runningapplication.EamilUtil;
 import com.example.runningapplication.R;
+import com.example.runningapplication.config.appConfig;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -55,7 +56,7 @@ public class ForgetActivity extends Activity {
                             FormBody formBody=new FormBody.Builder().add("mail",mail).add("pwd",password).build();
                             OkHttpClient client = new OkHttpClient();
                             Request request = new Request.Builder()
-                                    .url("http://172.22.81.151:8080/forget")
+                                    .url(appConfig.ipAddress + "/forget")
                                     .post(formBody)
                                     .build();
                             Response response = client.newCall(request).execute();

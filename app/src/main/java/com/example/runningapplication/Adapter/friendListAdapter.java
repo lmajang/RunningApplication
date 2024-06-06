@@ -2,6 +2,7 @@ package com.example.runningapplication.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ public class friendListAdapter extends RecyclerView.Adapter<friendListAdapter.vi
 
     List<friendEntity> friendList;
     private Context mContext;
+    private View view;
 
     public friendListAdapter(List<friendEntity> friendList){
         this.friendList = friendList;
@@ -32,7 +34,7 @@ public class friendListAdapter extends RecyclerView.Adapter<friendListAdapter.vi
     public viewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         mContext = parent.getContext();
 
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.friend_layout, parent, false);
+        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.friend_layout, parent, false);
 
         return new viewHolder(view);
     }
@@ -40,9 +42,9 @@ public class friendListAdapter extends RecyclerView.Adapter<friendListAdapter.vi
     @Override
     public void onBindViewHolder(@NonNull friendListAdapter.viewHolder holder, int position) {
         friendEntity friend = friendList.get(position);
-        holder.friend_hp.setImageResource(friend.getFriend_hpId());
+        holder.friend_hp.setImageResource(R.drawable.img);
         holder.username.setText(friend.getUsername());
-        holder.firstChat.setText(friend.getFirstChat());
+        holder.firstChat.setText("test1");
         holder.chatBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
