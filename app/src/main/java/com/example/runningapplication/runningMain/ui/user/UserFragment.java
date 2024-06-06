@@ -58,6 +58,7 @@ public class UserFragment extends Fragment {
         textView3=view.findViewById(R.id.text3);
         sp = this.getActivity().getSharedPreferences("user", this.getActivity().MODE_PRIVATE);
         String id=sp.getString("id",null);
+        String name=sp.getString("username",null);
         progressBar.setProgress(75);
         new Thread(new Runnable() {
             @Override
@@ -77,7 +78,7 @@ public class UserFragment extends Fragment {
                     username=jsonObject.getString("name");
                     target=jsonObject.getString("target");
                     avatarchange(avatarnum);
-                    textView1.setText(username);
+                    textView1.setText(name);
                     textView2.setText("个性签名:\n"+message);
                     textView3.setText(target);
                 }catch (Exception e) {

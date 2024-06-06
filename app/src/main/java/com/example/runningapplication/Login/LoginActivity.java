@@ -13,6 +13,9 @@ import android.widget.Toast;
 import com.example.runningapplication.R;
 import com.example.runningapplication.runningMain.runningMainActivity;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.regex.Pattern;
 
 import okhttp3.FormBody;
@@ -58,16 +61,25 @@ public class LoginActivity extends Activity {
                                         .build();
                                 Response response = client.newCall(request).execute();
                                 final String responseData = response.body().string();
+                                JSONObject jsonObject = new JSONObject(responseData);
                                 if(!responseData.equals("0")){
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
                                             Intent intent = new Intent();
                                             intent.setClass(LoginActivity.this, runningMainActivity.class);            //设置页面跳转
                                             SharedPreferences.Editor editor = sp.edit();
-                                            editor.putString("mail",username);
-                                            editor.putString("id",responseData);
+                                            String id = "",name="";
+                                            try {
+                                                id = jsonObject.getString("id");
+                                                name = jsonObject.getString("name");
+                                            } catch (JSONException e) {
+                                                throw new RuntimeException(e);
+                                            }
+                                            editor.putString("mail", username);
+                                            editor.putString("id", id);
+                                            editor.putString("username", name);
                                             editor.commit();                                        //将用户名存到SharedPreferences中
                                             //cursor.moveToFirst();                                   //将光标移动到position为0的位置，默认位置为-1
                                             //String loginname = cursor.getString(0);
@@ -87,7 +99,7 @@ public class LoginActivity extends Activity {
                                 e.printStackTrace();
                             }
                         }
-                    }).start();
+                        }).start();
                 }
 
             }
