@@ -1,0 +1,10 @@
+<resources>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- 定义你的应用样式 -->
+    </style>
+
+    <!-- 自定义进度条样式 -->
+    <style name="CustomProgressBar" parent="@android:style/Widget.ProgressBar.Horizontal">
+        <item name="android:height">10dp</item> <!-- 设置进度条高度为 10dp -->
+    </style>
+</resources>
