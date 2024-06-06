@@ -82,8 +82,7 @@ public class HomeFragment extends Fragment {
                     JSONObject jsonObject = new JSONObject(responseData);
                     String avatar=jsonObject.getString("avatar");
                     target=jsonObject.getString("target");
-                    if(avatar.equals("1"))circularStatView.setCenterImage(BitmapFactory.decodeResource(getResources(), R.drawable.avatar1));
-                    else circularStatView.setCenterImage(BitmapFactory.decodeResource(getResources(), R.drawable.img));
+                    avatarchange(avatar);
                 }catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -177,6 +176,13 @@ public class HomeFragment extends Fragment {
                         }
                     }
                 });
+    }
+    public void avatarchange(String avatarnum){
+        if(avatarnum.equals("1")) circularStatView.setCenterImage(BitmapFactory.decodeResource(getResources(),R.drawable.avatar1));
+        if(avatarnum.equals("2")) circularStatView.setCenterImage(BitmapFactory.decodeResource(getResources(),R.drawable.avatar2));
+        if(avatarnum.equals("3")) circularStatView.setCenterImage(BitmapFactory.decodeResource(getResources(),R.drawable.avatar3));
+        if(avatarnum.equals("4")) circularStatView.setCenterImage(BitmapFactory.decodeResource(getResources(),R.drawable.avatar4));
+        if(avatarnum.equals("5")) circularStatView.setCenterImage(BitmapFactory.decodeResource(getResources(),R.drawable.avatar5));
     }
 }
 

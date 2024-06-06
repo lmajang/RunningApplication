@@ -37,7 +37,7 @@
         <activity android:name=".Login.LoginActivity"  />
         <activity android:name=".Login.RegisterActivity"/>
         <activity android:name=".Login.ForgetActivity"/>
-
+        <activity android:name=".Login.ChangePwdActivity"/>
         <activity android:name=".runningFriend.friendActivity" />
         <activity android:name=".runningMain.runningMainActivity"/>
         <service android:name="com.amap.api.location.APSService" />
