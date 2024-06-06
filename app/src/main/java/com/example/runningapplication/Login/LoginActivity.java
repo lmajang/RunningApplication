@@ -11,7 +11,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.runningapplication.R;
+import com.example.runningapplication.chatClient.Client;
+import com.example.runningapplication.config.appConfig;
 import com.example.runningapplication.runningMain.runningMainActivity;
+import com.example.runningapplication.service.chatSocketService;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,7 +30,9 @@ public class LoginActivity extends Activity {
     EditText name, pwd;
     TextView forget;
     Button btnlogin, btnreg;
-    SharedPreferences sp;
+
+    View view;
+    static public SharedPreferences sp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +43,7 @@ public class LoginActivity extends Activity {
         forget = this.findViewById(R.id.Forgetpassword);    //忘记密码按钮
         btnlogin = this.findViewById(R.id.Sign_in);         //登录按钮
         btnreg = this.findViewById(R.id.Sign_up);               //注册按钮
+
         sp = this.getSharedPreferences("user", this.MODE_PRIVATE);
 
         name.setText(sp.getString("mail", null));
@@ -56,7 +62,7 @@ public class LoginActivity extends Activity {
                                 FormBody formBody=new FormBody.Builder().add("mail",username).add("pwd",password).build();
                                 OkHttpClient client = new OkHttpClient();
                                 Request request = new Request.Builder()
-                                        .url("http://172.22.81.151:8080/login")
+                                        .url(appConfig.ipAddress+"/login")
                                         .post(formBody)
                                         .build();
                                 Response response = client.newCall(request).execute();
@@ -68,6 +74,7 @@ public class LoginActivity extends Activity {
                                         public void run() {
                                             Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
                                             Intent intent = new Intent();
+                                            Intent serviceSocketIntent = new Intent(LoginActivity.this, chatSocketService.class);
                                             intent.setClass(LoginActivity.this, runningMainActivity.class);            //设置页面跳转
                                             SharedPreferences.Editor editor = sp.edit();
                                             String id = "",name="";
@@ -83,6 +90,7 @@ public class LoginActivity extends Activity {
                                             editor.commit();                                        //将用户名存到SharedPreferences中
                                             //cursor.moveToFirst();                                   //将光标移动到position为0的位置，默认位置为-1
                                             //String loginname = cursor.getString(0);
+                                            startService(serviceSocketIntent);
                                             startActivity(intent);
                                         }
                                     });

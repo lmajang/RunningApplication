@@ -40,13 +40,13 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.viewHolder> {
             holder.rightContext.setVisibility(View.VISIBLE);
             holder.rightChatContext.setText(chatMsg.getContext());
             holder.rightName.setText(chatMsg.getUsername());
-            holder.rightHp.setImageResource(chatMsg.getImgFaceId());
+            holder.rightHp.setImageResource(R.drawable.img);
         }else{
             holder.rightContext.setVisibility(View.GONE);
             holder.leftContext.setVisibility(View.VISIBLE);
             holder.leftChatContext.setText(chatMsg.getContext());
             holder.leftName.setText(chatMsg.getUsername());
-            holder.leftHp.setImageResource(chatMsg.getImgFaceId());
+            holder.leftHp.setImageResource(R.drawable.img);
         }
     }
 

@@ -2,6 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <com.amap.api.maps2d.MapView
@@ -131,7 +132,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:visibility="gone">
+            android:visibility="gone"
+            >
             <TextView
                 android:id="@+id/running_pause_btn"
                 android:layout_width="64dp"
@@ -141,7 +143,6 @@
                 android:gravity="center"/>
 
             <TextView
-                android:id="@+id/running_end_btn"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
                 android:background="@drawable/map_runend_btn"
@@ -150,8 +151,17 @@
                 android:gravity="center"
                 android:padding="5dp"
                 android:layout_marginLeft="30dp"
+                android:visibility="gone"
                 />
-
+            <com.dinuscxj.progressbar.CircleProgressBar
+                android:id="@+id/running_end_btn"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_marginLeft="30dp"
+                app:progress_text_size="@dimen/textsize_8"
+                app:progress_style="solid"
+                app:progress_text_color="@color/black"
+                />
 
         </LinearLayout>
 

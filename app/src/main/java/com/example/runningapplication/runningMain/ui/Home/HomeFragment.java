@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import com.example.runningapplication.R;
 import com.example.runningapplication.View.CircularStatView;
 import com.example.runningapplication.View.Weather;
+import com.example.runningapplication.config.appConfig;
 import com.example.runningapplication.runningMap.mapActivity;
 import com.google.gson.Gson;
 import com.qweather.sdk.bean.base.Code;
@@ -73,7 +74,7 @@ public class HomeFragment extends Fragment {
                     FormBody formBody = new FormBody.Builder().add("id", id).build();
                     OkHttpClient client = new OkHttpClient();
                     Request request = new Request.Builder()
-                            .url("http://172.22.81.151:8080/home1")
+                            .url(appConfig.ipAddress+"/home1")
                             .post(formBody)
                             .build();
                     Response response = client.newCall(request).execute();
@@ -99,7 +100,7 @@ public class HomeFragment extends Fragment {
                     FormBody formBody = new FormBody.Builder().add("id", id).add("date",year+"/"+month+"/"+day+"").build();
                     OkHttpClient client = new OkHttpClient();
                     Request request = new Request.Builder()
-                            .url("http://172.22.81.151:8080/home2")
+                            .url(appConfig.ipAddress+"/home2")
                             .post(formBody)
                             .build();
                     Response response = client.newCall(request).execute();

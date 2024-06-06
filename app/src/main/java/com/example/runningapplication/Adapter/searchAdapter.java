@@ -2,12 +2,12 @@ package com.example.runningapplication.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ResourceCursorAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,40 +19,39 @@ import com.example.runningapplication.runningChat.chatActivity;
 
 import java.util.List;
 
-public class friendListAdapter extends RecyclerView.Adapter<friendListAdapter.viewHolder> {
-
+public class searchAdapter extends RecyclerView.Adapter<searchAdapter.viewHolder>{
     List<friendEntity> friendList;
     private Context mContext;
     private View view;
 
-    public friendListAdapter(List<friendEntity> friendList){
+    public searchAdapter(List<friendEntity> friendList){
         this.friendList = friendList;
     }
 
     @NonNull
     @Override
-    public viewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public searchAdapter.viewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         mContext = parent.getContext();
 
-        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.friend_layout, parent, false);
+        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_user_layout, parent, false);
 
-        return new viewHolder(view);
+        return new searchAdapter.viewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull friendListAdapter.viewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull searchAdapter.viewHolder holder, int position) {
         friendEntity friend = friendList.get(position);
         holder.friend_hp.setImageResource(R.drawable.img);
         holder.username.setText(friend.getUsername());
-        holder.firstChat.setText("test1");
-        holder.chatBtn.setOnClickListener(new View.OnClickListener(){
+        holder.SearchUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setClass(mContext, chatActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra("data", friend);
-                mContext.startActivity(intent);
+//                Intent intent = new Intent();
+//                intent.setClass(mContext, chatActivity.class);
+//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                intent.putExtra("data", friend);
+//                mContext.startActivity(intent);
+                Log.d("searchFriend",friend.getUsername());
             }
         });
     }
@@ -66,16 +65,13 @@ public class friendListAdapter extends RecyclerView.Adapter<friendListAdapter.vi
 
         private ImageView friend_hp;
         private TextView username;
-        private TextView firstChat;
-
-        private TextView chatBtn;
+        private LinearLayout SearchUser;
 
         public viewHolder(@NonNull View itemView) {
             super(itemView);
-            friend_hp = (ImageView) itemView.findViewById(R.id.friend_hp);
-            username = (TextView) itemView.findViewById(R.id.username);
-            firstChat = (TextView) itemView.findViewById(R.id.first_chat);
-            chatBtn = (TextView) itemView.findViewById(R.id.chat_btn);
+            friend_hp = (ImageView) itemView.findViewById(R.id.search_friend_hp);
+            username = (TextView) itemView.findViewById(R.id.search_username);
+            SearchUser = (LinearLayout) itemView.findViewById(R.id.search_user);
         }
     }
 }
