@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -38,6 +39,7 @@ public class friendActivity extends Activity {
     Button btn1,btn2;
     SharedPreferences sp;
     CircularStatView circularStatView;
+    private static final String TAG = "friendActivity";
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +54,7 @@ public class friendActivity extends Activity {
         textView3=this.findViewById(R.id.text3);
         Intent intent=getIntent();
         String receiverid=intent.getStringExtra("receiverid");
+        Log.d(TAG,receiverid);
         sp = this.getSharedPreferences("user", this.MODE_PRIVATE);
         String senderid=sp.getString("id",null);
         progressBar.setProgress(75);
@@ -59,7 +62,7 @@ public class friendActivity extends Activity {
             @Override
             public void run() {
                 try {
-                    FormBody formBody = new FormBody.Builder().add("friendid", receiverid).add("userid",senderid).build();
+                    FormBody formBody = new FormBody.Builder().add("friendId", receiverid).add("userId",senderid).build();
                     OkHttpClient client = new OkHttpClient();
                     Request request = new Request.Builder()
                             .url(appConfig.ipAddress+"/isFriend")
@@ -67,7 +70,8 @@ public class friendActivity extends Activity {
                             .build();
                     Response response = client.newCall(request).execute();
                     final String responseData = response.body().string();
-                    if(responseData.equals("true")){
+                    Log.d(TAG,responseData);
+                    if(responseData.equals("1")){
                         btn1.setVisibility(View.INVISIBLE);
                         btn2.setVisibility(View.VISIBLE);
                     }

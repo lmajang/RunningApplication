@@ -21,9 +21,12 @@ import com.example.runningapplication.Login.ChangePwdActivity;
 import com.example.runningapplication.Login.LoginActivity;
 import com.example.runningapplication.R;
 import com.example.runningapplication.View.Avatar;
+import com.example.runningapplication.chatClient.Client;
 import com.example.runningapplication.config.appConfig;
 import com.example.runningapplication.runningMain.runningMainActivity;
+import com.example.runningapplication.utils.httpTools;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import okhttp3.FormBody;
@@ -166,18 +169,33 @@ public class UserFragment extends Fragment {
                 intent.setClass(view.getContext(), ChangePwdActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 view.getContext().startActivity(intent);
-
+                runningMainActivity.instance.finish();
             }
         });
         btn4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent();
-                intent.setClass(view.getContext(), LoginActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                Toast.makeText(getContext(),"退出登录！",Toast.LENGTH_SHORT).show();
-                view.getContext().startActivity(intent);
-                runningMainActivity.instance.finish();
+                JSONObject json = new JSONObject();
+                try {
+                    json.put("userId", Client.getUserId());
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                String str = httpTools.post(appConfig.ipAddress+"/closeMySocket",json.toString());
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }
+                    }).start();
+                    Intent intent = new Intent();
+                    intent.setClass(view.getContext(), LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                    Toast.makeText(getContext(),"退出登录！",Toast.LENGTH_SHORT).show();
+                    view.getContext().startActivity(intent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
     }

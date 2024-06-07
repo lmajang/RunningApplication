@@ -1,6 +1,7 @@
 package com.example.runningapplication.runningMain.ui.runningFriendList;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,11 +10,15 @@ import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,6 +34,8 @@ import com.example.runningapplication.Login.LoginActivity;
 import com.example.runningapplication.R;
 import com.example.runningapplication.config.appConfig;
 import com.example.runningapplication.entity.friendEntity;
+import com.example.runningapplication.runningChat.chatActivity;
+import com.example.runningapplication.runningFriend.friendActivity;
 import com.example.runningapplication.utils.httpTools;
 
 import org.json.JSONObject;
@@ -176,6 +183,43 @@ public class friendListFragment extends Fragment {
 //        searchRecyclerView.setLayoutManager(searchLayoutManger);
 //        sAdapter = new searchAdapter(SearchFriendList);
 //        searchRecyclerView.setAdapter(sAdapter);
+        friendSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if(actionId == EditorInfo.IME_ACTION_SEARCH){
+                    String searchMessage = v.getText().toString();
+                    Log.d(TAG, searchMessage);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                JSONObject jsonObject = new JSONObject();
+                                jsonObject.put("username",searchMessage);
+                                String res = httpTools.post(appConfig.ipAddress+"/user4",jsonObject.toString());
+                                Log.d(TAG, res);
+                                jsonObject=new JSONObject(res);
+                                String id=jsonObject.getString("id");
+                                if(res!=null){
+                                    Intent intent = new Intent();
+                                    intent.setClass(view.getContext(), friendActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    intent.putExtra("receiverid", id);
+                                    view.getContext().startActivity(intent);
+                                }else{
+                                    Toast.makeText(view.getContext(),"没有搜索到该用户!",Toast.LENGTH_SHORT).show();
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }
+                    }).start();
+
+                    return true;
+                }
+                return false;
+            }
+
+        });
     }
 
     private void addFriend(friendEntity friend){

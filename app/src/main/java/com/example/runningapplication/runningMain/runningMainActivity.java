@@ -1,7 +1,13 @@
 package com.example.runningapplication.runningMain;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+
+import com.example.runningapplication.R;
+import com.example.runningapplication.service.chatSocketService;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
@@ -22,6 +28,8 @@ public class runningMainActivity extends AppCompatActivity {
     private ActivityRunningMainBinding binding;
 
     public static runningMainActivity instance = null;
+
+    static private final String TAG = "runningMainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +61,7 @@ public class runningMainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.d(TAG,"runningMainActivity Destroy");
         Intent intent = new Intent(this, chatSocketService.class);
         stopService(intent);
     }

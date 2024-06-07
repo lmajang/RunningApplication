@@ -17,7 +17,7 @@ public class heartClient implements Runnable{
     @Override
     public void run(){
         try {
-            while(true){
+            while(!Thread.currentThread().isInterrupted()){
                 Thread.sleep(10*1000);
                 JSONObject json = new JSONObject();
                 json.put("type", "heart");

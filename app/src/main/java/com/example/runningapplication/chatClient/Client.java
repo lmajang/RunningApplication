@@ -59,7 +59,7 @@ public class Client {
 //
 //            listenClientThread.start();
 //            保持连接
-            while (true){
+            while (!Thread.currentThread().isInterrupted()){
                     json = (JSONObject)ois.readObject();
                     if(json.get("type").equals("chat")){
                         String msg = (String) json.get("msg");

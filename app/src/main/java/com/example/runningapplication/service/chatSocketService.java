@@ -37,5 +37,7 @@ public class chatSocketService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d(TAG,"SocketService Destroy");
+        socketThread.interrupt();
     }
 }
