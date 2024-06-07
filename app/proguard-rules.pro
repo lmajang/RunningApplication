@@ -20,3 +20,7 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
+-keepclasseswithmembers class * {
+    public <init>(android.content.Context);
+}
+

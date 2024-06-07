@@ -24,5 +24,16 @@ public class insertDB {
         values.put("message",message);
         values.put("timestamp", String.valueOf(new Timestamp(System.currentTimeMillis())));
         long newRowId = appConfig.sqLiteDatabase.insert("chat",null,values);
+        System.out.println(newRowId);
+    }
+
+    static public void insertChatEntity(String sender_id, String receiver_id, String message, String timestamp){
+        ContentValues values = new ContentValues();
+        values.put("sender_id", sender_id);
+        values.put("receiver_id",receiver_id);
+        values.put("message",message);
+        values.put("timestamp", timestamp);
+        long newRowId = appConfig.sqLiteDatabase.insert("chat",null,values);
+        System.out.println(newRowId);
     }
 }

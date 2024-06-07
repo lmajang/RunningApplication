@@ -2,7 +2,6 @@ package com.example.runningapplication.runningMain.ui.runningFriendList;
 
 import android.annotation.SuppressLint;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -10,17 +9,11 @@ import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.SearchView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,7 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.fastjson.JSON;
 import com.example.runningapplication.Adapter.friendListAdapter;
-import com.example.runningapplication.Adapter.searchAdapter;
+import com.example.runningapplication.Adapter.runRecordAdapter;
 import com.example.runningapplication.DB.insertDB;
 import com.example.runningapplication.Login.LoginActivity;
 import com.example.runningapplication.R;
@@ -38,10 +31,8 @@ import com.example.runningapplication.config.appConfig;
 import com.example.runningapplication.entity.friendEntity;
 import com.example.runningapplication.utils.httpTools;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,7 +49,7 @@ public class friendListFragment extends Fragment {
     private RecyclerView searchRecyclerView;
     private friendListAdapter adapter;
 
-    private searchAdapter sAdapter;
+    private runRecordAdapter sAdapter;
 
     private String userId ;
     private View view;
@@ -223,12 +214,14 @@ public class friendListFragment extends Fragment {
                         Cursor cursor = appConfig.sqLiteDatabase.query("friendlist",null,null,null,null,null,null,null);
                         if(cursor.getCount()>0){
                             cursor.moveToFirst();
-                            for(int i=0;i<cursor.getCount();i++){
+                            while (cursor.moveToNext()){
                                 friendList.add(new friendEntity(cursor.getString(cursor.getColumnIndexOrThrow("friend_id")),
                                         cursor.getString(cursor.getColumnIndexOrThrow("avatar")),
                                         cursor.getString(cursor.getColumnIndexOrThrow("username"))));
                             }
                         }
+                        // 完成后关闭cursor
+                        cursor.close();
                     }
                 }catch (Exception e){
                     e.printStackTrace();

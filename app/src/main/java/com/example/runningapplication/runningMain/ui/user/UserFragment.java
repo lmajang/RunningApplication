@@ -21,6 +21,7 @@ import com.example.runningapplication.Login.ChangePwdActivity;
 import com.example.runningapplication.Login.LoginActivity;
 import com.example.runningapplication.R;
 import com.example.runningapplication.View.Avatar;
+import com.example.runningapplication.config.appConfig;
 
 import org.json.JSONObject;
 
@@ -67,7 +68,7 @@ public class UserFragment extends Fragment {
                     FormBody formBody = new FormBody.Builder().add("id", id).build();
                     OkHttpClient client = new OkHttpClient();
                     Request request = new Request.Builder()
-                            .url("http://172.22.81.151:8080/user2")
+                            .url(appConfig.ipAddress+"/user2")
                             .post(formBody)
                             .build();
                     Response response = client.newCall(request).execute();
@@ -108,7 +109,7 @@ public class UserFragment extends Fragment {
                             FormBody formBody = new FormBody.Builder().add("id", id).add("avatar", avatarnum).build();
                             OkHttpClient client = new OkHttpClient();
                             Request request = new Request.Builder()
-                                    .url("http://172.22.81.151:8080/user1")
+                                    .url(appConfig.ipAddress+"/user1")
                                     .post(formBody)
                                     .build();
                             Response response = client.newCall(request).execute();
@@ -138,7 +139,7 @@ public class UserFragment extends Fragment {
                             FormBody formBody = new FormBody.Builder().add("id", id).add("target", target1).build();
                             OkHttpClient client = new OkHttpClient();
                             Request request = new Request.Builder()
-                                    .url("http://172.22.81.151:8080/user3")
+                                    .url(appConfig.ipAddress+"/user3")
                                     .post(formBody)
                                     .build();
                             Response response = client.newCall(request).execute();

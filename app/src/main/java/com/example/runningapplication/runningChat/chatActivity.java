@@ -3,6 +3,7 @@ package com.example.runningapplication.runningChat;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -46,6 +47,7 @@ public class chatActivity extends Activity {
     static friendEntity friend;
 
     private static String userId = LoginActivity.sp.getString("id",null);
+    private static String username = LoginActivity.sp.getString("username",null);
     private static final String TAG = "chatActivity";
     @SuppressLint("HandlerLeak")
     public static Handler mainHandler = new Handler(){
@@ -55,14 +57,12 @@ public class chatActivity extends Activity {
             if (msg.what == 1) {
                 receiveMassage((String)msg.obj,true);
             }else if (msg.what == INIT_CHAT){
-                if(!chatMsgList.isEmpty()){
-                    chatMsgList.clear();
-                }
                 List<singleChatEntity> sChatList = JSON.parseArray(msg.obj.toString(),singleChatEntity.class);
                 if(!sChatList.isEmpty()){
                     for(singleChatEntity singleChat:sChatList){
+                        insertDB.insertChatEntity(friend.getId(),userId,singleChat.getMessage());
                         if(singleChat.getSenderId().equals(Client.getUserId())){
-                            chatMsgList.add(new chatEntity(Client.getUserId(),singleChat.getMessage(),chatEntity.SEND));
+                            chatMsgList.add(new chatEntity(username,singleChat.getMessage(),chatEntity.SEND));
                         }else if(singleChat.getReceiverId().equals(Client.getUserId())){
                             chatMsgList.add(new chatEntity(friend.getUsername(),singleChat.getMessage(),chatEntity.RECEIVE));
                         }
@@ -106,7 +106,11 @@ public class chatActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
+        if(!chatMsgList.isEmpty()){
+            chatMsgList.clear();
+        }
         initChatPage();
+        initChatPageLocal();
     }
 
     private void initRecycle(){
@@ -119,7 +123,7 @@ public class chatActivity extends Activity {
 
 //    发送信息
     private void sendMassage(String msg,boolean newChat){
-        chatEntity chatMsg = new chatEntity(Client.getUserId(), msg, chatEntity.SEND);
+        chatEntity chatMsg = new chatEntity(username, msg, chatEntity.SEND);
         if(newChat) chatMsgList.add(chatMsg);
         insertDB.insertChatEntity(userId,friend.getId(),msg);
         adapter.notifyItemInserted(chatMsgList.size() - 1);
@@ -142,21 +146,49 @@ public class chatActivity extends Activity {
             public void run() {
                 try {
                     JSONObject json = new JSONObject();
-                    json.put("sender_id",Client.getUserId());
-                    json.put("receiver_id",friend.getId());
-                    String getChatListJson = httpTools.post(appConfig.ipAddress+"/FindFriendChat",json.toJSONString());
+                    json.put("userId",Client.getUserId());
+                    json.put("sendId",friend.getId());
+                    String getChatListJson = httpTools.post(appConfig.ipAddress+"/FindNoReceiveChat",json.toJSONString());
                     Log.d(TAG,getChatListJson);
                     if(getChatListJson!=null){
                         mainHandler.obtainMessage(INIT_CHAT,getChatListJson).sendToTarget();
-                    }else {
-//                        本地记录
                     }
-
                 }catch (Exception e){
                     e.printStackTrace();
                 }
             }
         }).start();
+
     }
 
+    private void initChatPageLocal(){
+
+        String[] columns = {"sender_id","receiver_id","message"};
+
+        String whereClause = "(sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)";
+
+        String[] whereArgs = {friend.getId(), Client.getUserId(), Client.getUserId(), friend.getId()};
+//                        本地记录
+        Cursor cursor = appConfig.sqLiteDatabase.query("chat",columns,whereClause,whereArgs,null,null,"timestamp ASC",null);
+
+
+        if(cursor.getCount()>0){
+            cursor.moveToFirst();
+            Log.d(TAG,String.valueOf(cursor.getCount()));
+            while (cursor.moveToNext()){
+                System.out.println(cursor.getString(cursor.getColumnIndexOrThrow("message"))+":"+cursor.getString(cursor.getColumnIndexOrThrow("receiver_id")));
+                if(Client.getUserId().equals(cursor.getString(cursor.getColumnIndexOrThrow("sender_id")))){
+
+                    chatMsgList.add(new chatEntity(username,cursor.getString(cursor.getColumnIndexOrThrow("message")),chatEntity.SEND));
+                }else if(friend.getId().equals(cursor.getString(cursor.getColumnIndexOrThrow("sender_id")))){
+
+                    chatMsgList.add(new chatEntity(friend.getUsername(),cursor.getString(cursor.getColumnIndexOrThrow("message")),chatEntity.RECEIVE));
+                }
+            }
+            adapter.notifyItemInserted(chatMsgList.size() - 1);
+            recyclerView.scrollToPosition(chatMsgList.size() - 1);
+        }
+        // 完成后关闭cursor
+        cursor.close();
+    }
 }
