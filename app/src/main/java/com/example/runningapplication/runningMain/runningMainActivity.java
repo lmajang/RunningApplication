@@ -1,12 +1,7 @@
 package com.example.runningapplication.runningMain;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-
-import com.example.runningapplication.R;
-import com.example.runningapplication.service.chatSocketService;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
@@ -14,7 +9,13 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.amap.api.services.core.ServiceSettings;
+import com.example.runningapplication.R;
 import com.example.runningapplication.databinding.ActivityRunningMainBinding;
+import com.example.runningapplication.service.chatSocketService;
+import com.example.runningapplication.service.locationService;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 
 public class runningMainActivity extends AppCompatActivity {
 
@@ -25,6 +26,11 @@ public class runningMainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ServiceSettings.updatePrivacyShow(this, true, true);
+        ServiceSettings.updatePrivacyAgree(this,true);
+        Intent intent=new Intent(runningMainActivity.this, locationService.class);
+        startService(intent);
+
         instance = this;
         binding = ActivityRunningMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -45,8 +51,8 @@ public class runningMainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
         Intent intent = new Intent(this, chatSocketService.class);
         stopService(intent);
     }

@@ -45,7 +45,8 @@
         <service android:name=".service.locationService"/>
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="9e147c66023101c45d858fb42a62e301"/>
+            android:value="2c6fa42e24f31ac87ca57fc8558d4449"/>
+<!--                "9e147c66023101c45d858fb42a62e301"/>-->
     </application>
 
 </manifest>

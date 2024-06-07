@@ -1,9 +1,12 @@
 package com.example.runningapplication.runningMain.ui.home;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.amap.api.maps2d.model.LatLng;
 import com.example.runningapplication.R;
 import com.example.runningapplication.View.CircularStatView;
 import com.example.runningapplication.View.Weather;
@@ -51,7 +55,19 @@ public class HomeFragment extends Fragment {
     private View view;
     SharedPreferences sp;
     String target="",run="";
-    String citycode = "",tianqi1 = null, wendu = null, shidu = null;
+    static String citylocation="",citycode = "",tianqi1 = null, wendu = null, shidu = null;
+    static LatLng location=null;
+    static public final int LOCATION_GET = 2;
+    @SuppressLint("HandlerLeak")
+    public static Handler mainHandler=new Handler(){
+        @Override
+        public void handleMessage(Message msg){
+            if(msg.what == LOCATION_GET){
+                location=(LatLng) msg.obj;
+                citylocation=(location.latitude+30)+","+location.longitude;
+            }
+        }
+    };
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -141,27 +157,35 @@ public class HomeFragment extends Fragment {
         HeConfig.switchToDevService();
     }
     private void getCitycode(){
-        QWeather.getGeoCityLookup(view.getContext(), "120.04,30.23",new QWeather.OnResultGeoListener(){
-
+        new Thread(new Runnable() {
             @Override
-            public void onError(Throwable throwable) {
-                Log.i("123", "Weather Now onError: ");
-            }
+            public void run() {
+                while(citylocation.equals("")) {}
+                Log.i("123123",citylocation);
+                QWeather.getGeoCityLookup(view.getContext(), citylocation//"120.04,30.23"
+                        ,new QWeather.OnResultGeoListener(){
+                            @Override
+                            public void onError(Throwable throwable) {
+                                Log.i("123", "Weather Now onError: ",throwable);
+                            }
 
-            @Override
-            public void onSuccess(GeoBean geoBean) {
-                String jsonCity = new Gson().toJson(geoBean.getLocationBean());
-                Log.i("123123", " Weather Now onSuccess: " + jsonCity);
-                try{
-                    JSONArray jsonArray = new JSONArray(jsonCity);
-                    JSONObject jsonObject = jsonArray.getJSONObject(0);
-                    citycode=jsonObject.getString("id");
-                    Log.i("123123123", citycode);
-                }catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                            @Override
+                            public void onSuccess(GeoBean geoBean) {
+                                String jsonCity = new Gson().toJson(geoBean.getLocationBean());
+                                Log.i("123123", " Weather Now onSuccess: " + jsonCity);
+                                try{
+                                    JSONArray jsonArray = new JSONArray(jsonCity);
+                                    JSONObject jsonObject = jsonArray.getJSONObject(0);
+                                    citycode=jsonObject.getString("id");
+                                    Log.i("123123123", citycode);
+                                }catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
             }
-        });
+        }).start();
+
     }
     private void getWeather() {
         new Thread(new Runnable() {

@@ -11,7 +11,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.runningapplication.R;
-import com.example.runningapplication.chatClient.Client;
 import com.example.runningapplication.config.appConfig;
 import com.example.runningapplication.runningMain.runningMainActivity;
 import com.example.runningapplication.service.chatSocketService;

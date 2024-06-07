@@ -166,7 +166,7 @@ public class UserFragment extends Fragment {
                 intent.setClass(view.getContext(), ChangePwdActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 view.getContext().startActivity(intent);
-                runningMainActivity.instance.finish();
+
             }
         });
         btn4.setOnClickListener(new View.OnClickListener() {
@@ -177,7 +177,7 @@ public class UserFragment extends Fragment {
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 Toast.makeText(getContext(),"退出登录！",Toast.LENGTH_SHORT).show();
                 view.getContext().startActivity(intent);
-
+                runningMainActivity.instance.finish();
             }
         });
     }
