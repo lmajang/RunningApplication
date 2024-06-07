@@ -14,21 +14,28 @@ import com.example.runningapplication.config.appConfig;
 public class chatSocketService extends Service {
     private String TAG = "chatSocketService";
 
+    Thread socketThread;
     @Override
     public void onCreate() {
         super.onCreate();
-        new Thread(new Runnable() {
+        socketThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 Log.d(TAG,LoginActivity.sp.getString("id",null));
                 Client.connect(appConfig.socketAddress, 9999, LoginActivity.sp.getString("id",null));
             }
-        }).start();
+        });
+        socketThread.start();
     }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 }

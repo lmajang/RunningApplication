@@ -1,8 +1,11 @@
 package com.example.runningapplication.runningMain;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.example.runningapplication.R;
+import com.example.runningapplication.service.chatSocketService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,10 +20,12 @@ public class runningMainActivity extends AppCompatActivity {
 
     private ActivityRunningMainBinding binding;
 
+    public static runningMainActivity instance = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        instance = this;
         binding = ActivityRunningMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -39,4 +44,10 @@ public class runningMainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(binding.navView, navController);
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Intent intent = new Intent(this, chatSocketService.class);
+        stopService(intent);
+    }
 }

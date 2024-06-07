@@ -22,6 +22,7 @@ import com.example.runningapplication.Login.LoginActivity;
 import com.example.runningapplication.R;
 import com.example.runningapplication.View.Avatar;
 import com.example.runningapplication.config.appConfig;
+import com.example.runningapplication.runningMain.runningMainActivity;
 
 import org.json.JSONObject;
 
@@ -165,6 +166,7 @@ public class UserFragment extends Fragment {
                 intent.setClass(view.getContext(), ChangePwdActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 view.getContext().startActivity(intent);
+                runningMainActivity.instance.finish();
             }
         });
         btn4.setOnClickListener(new View.OnClickListener() {
@@ -175,6 +177,7 @@ public class UserFragment extends Fragment {
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 Toast.makeText(getContext(),"退出登录！",Toast.LENGTH_SHORT).show();
                 view.getContext().startActivity(intent);
+
             }
         });
     }
