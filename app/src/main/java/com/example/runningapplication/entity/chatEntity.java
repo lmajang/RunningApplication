@@ -10,11 +10,13 @@ public class chatEntity {
     private String username;
     private String context;
     private int TYPE;
+    private String avatar;
     public chatEntity(){}
-    public chatEntity(String username, String context, int TYPE){
+    public chatEntity(String username, String context, int TYPE,String avatar){
         this.username = username;
         this.context = context;
         this.TYPE = TYPE;
+        this.avatar = avatar;
     }
     public String getUsername() {
         return username;
@@ -27,6 +29,7 @@ public class chatEntity {
     public String getContext() {
         return context;
     }
+    public String getAvatar(){return avatar;}
 
 
     public void setUsername(String username) {

@@ -1,6 +1,9 @@
 package com.example.runningapplication.runningMain.ui.home;
 
 import android.annotation.SuppressLint;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
@@ -13,16 +16,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 
 import com.amap.api.maps2d.model.LatLng;
+import com.example.runningapplication.NotificationUtils;
 import com.example.runningapplication.R;
 import com.example.runningapplication.View.CircularStatView;
 import com.example.runningapplication.View.Weather;
 import com.example.runningapplication.config.appConfig;
+import com.example.runningapplication.runningMain.runningMainActivity;
 import com.example.runningapplication.runningMap.mapActivity;
 import com.google.gson.Gson;
 import com.qweather.sdk.bean.base.Code;
@@ -77,6 +84,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        NotificationUtils.createNotificationChannel(getActivity());
         this.view = view;
         weather=view.findViewById(R.id.Weather);
         circularStatView =view.findViewById(R.id.circularStatView);
@@ -219,7 +227,7 @@ public class HomeFragment extends Fragment {
                                         if(tianqi1.contains("阴")) weather.setCenterImage(BitmapFactory.decodeResource(getResources(),R.drawable.yin));
                                         if(tianqi1.contains("云")) weather.setCenterImage(BitmapFactory.decodeResource(getResources(),R.drawable.cloud));
                                         if(tianqi1.contains("晴")) weather.setCenterImage(BitmapFactory.decodeResource(getResources(),R.drawable.sun));
-                                        if(tianqi1.contains("雨")) weather.setCenterImage(BitmapFactory.decodeResource(getResources(),R.drawable.rain));
+                                        if(tianqi1.contains("雨")) {weather.setCenterImage(BitmapFactory.decodeResource(getResources(),R.drawable.rain));sendRainNotification();}//showRainAlert();}
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
@@ -231,7 +239,35 @@ public class HomeFragment extends Fragment {
                         });
             }
         }).start();
+    }
+    private void showRainAlert() {
+        mainHandler.post(new Runnable() {
+            @Override
+            public void run() {
+//                new AlertDialog.Builder(view.getContext())
+//                        .setTitle("天气提醒")
+//                        .setMessage("当前有雨，不宜跑步。")
+//                        .setPositiveButton("确定", null)
+//                        .show();
+                Toast.makeText(view.getContext(), "当前有雨，不宜跑步。", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+    private void sendRainNotification() {
+        NotificationManager notificationManager = (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
 
+        Intent intent = new Intent(getContext(), runningMainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getContext(), NotificationUtils.CHANNEL_ID)
+                .setSmallIcon(R.drawable.rain)
+                .setContentTitle("天气提醒")
+                .setContentText("当前有雨，不宜跑步。")
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+
+        notificationManager.notify(1, builder.build());
     }
     public void avatarchange(String avatarnum){
         if(avatarnum.equals("1")) circularStatView.setCenterImage(BitmapFactory.decodeResource(getResources(),R.drawable.avatar1));
