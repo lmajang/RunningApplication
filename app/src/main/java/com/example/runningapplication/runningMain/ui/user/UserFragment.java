@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +24,7 @@ import com.example.runningapplication.R;
 import com.example.runningapplication.View.Avatar;
 import com.example.runningapplication.chatClient.Client;
 import com.example.runningapplication.config.appConfig;
+import com.example.runningapplication.runningFriend.friendNoticeListActivity;
 import com.example.runningapplication.runningMain.runningMainActivity;
 import com.example.runningapplication.utils.httpTools;
 
@@ -41,6 +43,7 @@ public class UserFragment extends Fragment {
     Avatar avatar;
     private ProgressBar progressBar;
     Button btn1,btn2,btn3,btn4;
+    ImageButton NoticeButton;
     SharedPreferences sp;
     @Nullable
     @Override
@@ -58,9 +61,11 @@ public class UserFragment extends Fragment {
         btn2=view.findViewById(R.id.button2);
         btn3=view.findViewById(R.id.button3);
         btn4=view.findViewById(R.id.button4);
+        NoticeButton = view.findViewById(R.id.btnImage);
         textView1=view.findViewById(R.id.text1);
         textView2=view.findViewById(R.id.text2);
         textView3=view.findViewById(R.id.text3);
+
         sp = this.getActivity().getSharedPreferences("user", this.getActivity().MODE_PRIVATE);
         String id=sp.getString("id",null);
         String name=sp.getString("username",null);
@@ -196,6 +201,14 @@ public class UserFragment extends Fragment {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            }
+        });
+
+        NoticeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(view.getContext(), friendNoticeListActivity.class);
+                startActivity(intent);
             }
         });
     }

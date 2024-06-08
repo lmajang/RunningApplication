@@ -68,7 +68,8 @@ public class chatActivity extends Activity {
                         }
                     }
                 }
-                adapter.notifyDataSetChanged();
+                adapter = new chatAdapter(chatMsgList);
+                recyclerView.setAdapter(adapter);
             }
         }
     };

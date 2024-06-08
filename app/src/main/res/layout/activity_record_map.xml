@@ -1,34 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
+
 
     <com.amap.api.maps.MapView
-        android:id="@+id/map"
+        android:id="@+id/record_map"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
     <LinearLayout
-        android:id="@+id/instrumentpanel"
         android:layout_width="match_parent"
         android:layout_height="175dp"
         android:background="@color/lightgreen"
-        android:orientation="vertical"
-        android:visibility="gone">
+        android:orientation="vertical">
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_gravity="center">
             <Chronometer
-                android:id="@+id/cm_passtime"
+                android:id="@+id/record_cm_passtime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:textColor="@color/black"
                 android:textSize="55sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -49,7 +47,7 @@
                     android:textColor="@color/black"
                     android:textSize="@dimen/textsize_8" />
                 <TextView
-                    android:id="@+id/tvMileage"
+                    android:id="@+id/record_tvMileage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
@@ -76,7 +74,7 @@
                     android:textColor="@color/black"
                     android:textSize="@dimen/textsize_8" />
                 <TextView
-                    android:id="@+id/tvSpeed"
+                    android:id="@+id/record_tvSpeed"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/margin_edge_20"
@@ -100,7 +98,7 @@
                     android:textColor="@color/black"
                     android:textSize="@dimen/textsize_8" />
                 <TextView
-                    android:id="@+id/cadence"
+                    android:id="@+id/record_cadence"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
 
@@ -115,57 +113,5 @@
 
         </LinearLayout>
     </LinearLayout>
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center"
-        android:layout_marginBottom="10dp">
-        <TextView
-            android:id="@+id/running_start_btn"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:background="@drawable/map_runstart_btn"
-            android:padding="5dp"
-            />
-        <LinearLayout
-            android:id="@+id/running_btns"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:visibility="gone"
-            >
-            <TextView
-                android:id="@+id/running_pause_btn"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:background="@drawable/map_runstop_btn"
-                android:padding="5dp"
-                android:gravity="center"/>
-
-            <TextView
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:background="@drawable/map_runend_btn"
-                android:textSize="25dp"
-                android:text="结束"
-                android:gravity="center"
-                android:padding="5dp"
-                android:layout_marginLeft="30dp"
-                android:visibility="gone"
-                />
-            <com.dinuscxj.progressbar.CircleProgressBar
-                android:id="@+id/running_end_btn"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:layout_marginLeft="30dp"
-                app:progress_text_size="@dimen/textsize_8"
-                app:progress_style="solid"
-                app:progress_text_color="@color/black"
-                />
-
-        </LinearLayout>
-
-    </LinearLayout>
-
 
 </FrameLayout>

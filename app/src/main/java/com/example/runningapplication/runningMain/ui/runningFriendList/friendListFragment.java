@@ -72,6 +72,7 @@ public class friendListFragment extends Fragment {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == UPDATE_RE) {
+                Log.d(TAG,msg.obj.toString());
                 List<friendEntity> List = JSON.parseArray(msg.obj.toString(),friendEntity.class);
                 friendList.addAll(List);
                 System.out.println(friendList);

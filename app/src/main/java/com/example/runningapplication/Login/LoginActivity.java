@@ -76,16 +76,18 @@ public class LoginActivity extends Activity {
                                             Intent serviceSocketIntent = new Intent(LoginActivity.this, chatSocketService.class);
                                             intent.setClass(LoginActivity.this, runningMainActivity.class);            //设置页面跳转
                                             SharedPreferences.Editor editor = sp.edit();
-                                            String id = "",name="";
+                                            String id = "",name="",target;
                                             try {
                                                 id = jsonObject.getString("id");
                                                 name = jsonObject.getString("name");
+                                                target = jsonObject.getString("target");
                                             } catch (JSONException e) {
                                                 throw new RuntimeException(e);
                                             }
                                             editor.putString("mail", username);
                                             editor.putString("id", id);
                                             editor.putString("username", name);
+                                            editor.putString("target",target);
                                             editor.commit();                                        //将用户名存到SharedPreferences中
                                             //cursor.moveToFirst();                                   //将光标移动到position为0的位置，默认位置为-1
                                             //String loginname = cursor.getString(0);

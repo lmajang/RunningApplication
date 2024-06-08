@@ -3,16 +3,10 @@ package com.example.runningapplication.runningMap;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Service;
-import android.content.ComponentName;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -20,6 +14,7 @@ import android.view.View;
 import android.widget.Chronometer;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -28,20 +23,30 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
-import com.amap.api.maps2d.AMap;
-import com.amap.api.maps2d.AMapUtils;
-import com.amap.api.maps2d.CameraUpdateFactory;
-import com.amap.api.maps2d.LocationSource;
-import com.amap.api.maps2d.LocationSource.OnLocationChangedListener;
-import com.amap.api.maps2d.MapView;
-import com.amap.api.maps2d.model.LatLng;
-import com.amap.api.maps2d.model.MyLocationStyle;
+import com.amap.api.maps.AMap;
+import com.amap.api.maps.AMapUtils;
+import com.amap.api.maps.CameraUpdateFactory;
+import com.amap.api.maps.LocationSource;
+import com.amap.api.maps.MapView;
+import com.amap.api.maps.model.LatLng;
+import com.amap.api.maps.model.MyLocationStyle;
 
-import com.amap.api.maps2d.model.PolylineOptions;
+import com.amap.api.maps.model.PolylineOptions;
+import com.amap.api.services.core.AMapException;
+import com.amap.api.services.core.LatLonPoint;
+import com.amap.api.services.geocoder.GeocodeResult;
+import com.amap.api.services.geocoder.GeocodeSearch;
+import com.amap.api.services.geocoder.RegeocodeQuery;
+import com.amap.api.services.geocoder.RegeocodeResult;
 import com.dinuscxj.progressbar.CircleProgressBar;
+import com.example.runningapplication.Login.LoginActivity;
 import com.example.runningapplication.R;
-import com.example.runningapplication.View.CircularStatView;
-import com.example.runningapplication.utils.mapTools;
+import com.example.runningapplication.chatClient.Client;
+import com.example.runningapplication.config.appConfig;
+import com.example.runningapplication.entity.locationEntity;
+import com.example.runningapplication.utils.httpTools;
+
+import org.json.simple.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -76,8 +81,13 @@ public class mapActivity extends Activity implements LocationSource, AMapLocatio
 
     private long allTime = 0;
 
+    private long startTime = 0;
+    private int cadence = 100;
+
     private long firstDownTime = 0;
     private List<LatLng> latLngs = new ArrayList<LatLng>();
+
+    private List<locationEntity> up_latLngs = new ArrayList<>();
 
     private boolean runState = false;
     private OnLocationChangedListener mListener;
@@ -85,12 +95,15 @@ public class mapActivity extends Activity implements LocationSource, AMapLocatio
     private AMapLocationClientOption mLocationOption;
     private PolylineOptions mPolylineOptions;
 
+    private GeocodeSearch geocodeSearch;
     private String TAG = "mapActivity";
 
     private boolean permissionStatus = false;
 
     private long downTime;
-    private static final int LONG_PRESS_THRESHOLD = 5000;//长按时间
+
+    AMapLocation run_location;
+    private static final int LONG_PRESS_THRESHOLD = 3000;//长按时间
 
     private static final class MyProgressFormatter implements CircleProgressBar.ProgressFormatter {
         private static final String DEFAULT_PATTERN = "结束";
@@ -110,7 +123,33 @@ public class mapActivity extends Activity implements LocationSource, AMapLocatio
             runningBtns.setVisibility(View.GONE);
             runState = false;
             passTime.stop();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("targetDistance", LoginActivity.sp.getString("target","1"));
+                        jsonObject.put("RanDistance",String.valueOf(ranDistance/1000));
+                        jsonObject.put("spendTime",String.valueOf(allTime));
+                        jsonObject.put("startTime",String.valueOf(startTime));
+                        jsonObject.put("runLine",up_latLngs.toString());
+                        jsonObject.put("speed",String.valueOf(avgSpeed));
+                        jsonObject.put("address",run_location.getCountry()+run_location.getProvince()+
+                                run_location.getCity()+run_location.getDistrict());
+                        jsonObject.put("cadence",String.valueOf(cadence));
+                        jsonObject.put("runnerId", Client.getUserId());
+                        String isSuccess = httpTools.post(appConfig.ipAddress+"/uploadRunRecord",jsonObject.toString());
+                        if (isSuccess.equals("0")){
+                            Log.d(TAG,"上传失败");
+                        }else {
+                            Toast.makeText(getApplicationContext(),"上传记录成功",Toast.LENGTH_SHORT).show();
+                        }
 
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
 
         }
     };
@@ -148,7 +187,11 @@ public class mapActivity extends Activity implements LocationSource, AMapLocatio
         AMapLocationClient.updatePrivacyShow(getApplicationContext(), true, true);
         AMapLocationClient.updatePrivacyAgree(getApplicationContext(), true);
         setContentView(R.layout.activity_map);
-        init();
+        try {
+            init();
+        } catch (AMapException e) {
+            throw new RuntimeException(e);
+        }
         initAddListeners();
         //获取地图控件引用
         mMapView = (MapView) findViewById(R.id.map);
@@ -272,6 +315,7 @@ public class mapActivity extends Activity implements LocationSource, AMapLocatio
                         +aMapLocation.getAdCode();
 
                 Log.d(TAG, now_addr);
+                run_location = aMapLocation;
                 if(runState){
                     long times = passTime.getBase();
                     Log.d(TAG,"times:" +(SystemClock.elapsedRealtime()-times));
@@ -292,6 +336,7 @@ public class mapActivity extends Activity implements LocationSource, AMapLocatio
                         }
                     }else {
                         latLngs.add(latLng);
+                        up_latLngs.add(new locationEntity(String.valueOf(latLng.latitude),String.valueOf(latLng.longitude)));
                     }
                 }
                 mListener.onLocationChanged(aMapLocation);
@@ -303,7 +348,7 @@ public class mapActivity extends Activity implements LocationSource, AMapLocatio
         }
     }
 
-    private void init(){
+    private void init() throws AMapException {
 
         mPolylineOptions = new PolylineOptions();
         runningStartBtn = (TextView) findViewById(R.id.running_start_btn);
@@ -325,6 +370,7 @@ public class mapActivity extends Activity implements LocationSource, AMapLocatio
         runningEndBtn.setProgressFormatter(new MyProgressFormatter());
 
         runningEndBtn.setMax(LONG_PRESS_THRESHOLD);
+        geocodeSearch = new GeocodeSearch(this);
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -336,6 +382,7 @@ public class mapActivity extends Activity implements LocationSource, AMapLocatio
                 runningBtns.setVisibility(View.VISIBLE);
                 instrumentpanel.setVisibility(View.VISIBLE);
                 runningStartBtn.setVisibility(View.GONE);
+                startTime = System.currentTimeMillis();
                 passTime.setBase(SystemClock.elapsedRealtime());
                 passTime.start();
             }
@@ -390,8 +437,9 @@ public class mapActivity extends Activity implements LocationSource, AMapLocatio
 
     private void drawPathLine(LatLng nowLatLng){
         latLngs.add(nowLatLng);
+        up_latLngs.add(new locationEntity(String.valueOf(nowLatLng.latitude),String.valueOf(nowLatLng.longitude)));
         aMap.addPolyline(new PolylineOptions().
-                addAll(latLngs).width(10).color(Color.argb(255, 1, 1, 1)));
+                addAll(latLngs).width(10).color(Color.GREEN));
     }
 
     private void updateProgress(){

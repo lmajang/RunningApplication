@@ -40,12 +40,14 @@
         <activity android:name=".Login.ChangePwdActivity"/>
         <activity android:name=".runningFriend.friendActivity" />
         <activity android:name=".runningMain.runningMainActivity"/>
+        <activity android:name=".runningFriend.friendNoticeListActivity"/>
+        <activity android:name=".runningMap.recordMapActivity"/>
         <service android:name="com.amap.api.location.APSService" />
         <service android:name=".service.chatSocketService"/>
         <service android:name=".service.locationService"/>
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="2c6fa42e24f31ac87ca57fc8558d4449"/>
+            android:value="9e147c66023101c45d858fb42a62e301"/>
 <!--                "9e147c66023101c45d858fb42a62e301"/>-->
     </application>
 

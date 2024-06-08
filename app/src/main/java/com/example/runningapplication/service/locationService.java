@@ -12,7 +12,7 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
-import com.amap.api.maps2d.model.LatLng;
+import com.amap.api.maps.model.LatLng;
 import com.example.runningapplication.runningMain.ui.home.HomeFragment;
 
 import java.text.SimpleDateFormat;
@@ -55,8 +55,10 @@ public class locationService extends Service implements AMapLocationListener {
                         +aMapLocation.getCountry()
                         +aMapLocation.getProvince()
                         +aMapLocation.getCity()
-                        +aMapLocation.getDistrict();
-                HomeFragment.mainHandler.obtainMessage(HomeFragment.LOCATION_GET,new LatLng(aMapLocation.getLongitude(),aMapLocation.getLatitude())).sendToTarget();
+                        +aMapLocation.getDistrict()+"||"+
+                        +aMapLocation.getLongitude()+" "+aMapLocation.getLatitude();
+                HomeFragment.mainHandler.obtainMessage(HomeFragment.LOCATION_GET,new LatLng(aMapLocation.getLatitude(),aMapLocation.getLongitude())).sendToTarget();
+
 
                 Log.d(TAG, now_addr);
             }else {

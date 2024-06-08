@@ -1,4 +1,4 @@
-package com.example.runningapplication.runningMain.ui.home;
+package com.example.runningapplication.runningMain.ui.Home;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -18,7 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.amap.api.maps2d.model.LatLng;
+import com.amap.api.maps.model.LatLng;
 import com.example.runningapplication.R;
 import com.example.runningapplication.View.CircularStatView;
 import com.example.runningapplication.View.Weather;
@@ -64,7 +64,7 @@ public class HomeFragment extends Fragment {
         public void handleMessage(Message msg){
             if(msg.what == LOCATION_GET){
                 location=(LatLng) msg.obj;
-                citylocation=(location.latitude+30)+","+location.longitude;
+                citylocation=location.longitude+","+location.latitude;
             }
         }
     };
