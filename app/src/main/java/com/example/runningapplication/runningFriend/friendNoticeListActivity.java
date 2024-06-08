@@ -27,26 +27,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class friendNoticeListActivity extends Activity {
-    private RecyclerView noticeRecyclerView;
+    private static RecyclerView noticeRecyclerView;
     private View view;
 
-    private noticeListAdapter noticeAdapter;
+    private static noticeListAdapter noticeAdapter;
 
     public static List<friendNoticeEntity> noticeList;
     private static final String TAG = "friendNoticeListActivity";
 
-    private static final int UPDATE_NOTICE = 1;
+    private static final int UPDATE_NOTICE = 100001;
+
+    public static final int DELETE_NOTICE = 100002;
 
     @SuppressLint("HandlerLeak")
-    private Handler handler = new Handler(){
+    public static Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             if(msg.what == UPDATE_NOTICE){
-                System.out.println("22222222222222222222222222222222222222222222222222222222222222222222222222222222222");
-                System.out.println(msg.obj);
                 noticeList.addAll(JSON.parseArray(msg.obj.toString(), friendNoticeEntity.class));
                 noticeAdapter.notifyItemInserted(noticeList.size() - 1);
                 noticeRecyclerView.scrollToPosition(noticeList.size() - 1);
+            }else if (msg.what == DELETE_NOTICE){
+                System.out.println("3333333322222222222222222222222222222222222222222222222222222222222222222222222222222");
+                System.out.println(msg.obj);
+                int index = noticeList.indexOf((friendNoticeEntity)msg.obj);
+                noticeList.remove((friendNoticeEntity)msg.obj);
+//                noticeAdapter.notifyItemRemoved((int)msg.obj);
+//                noticeRecyclerView.scrollToPosition((int)msg.obj);
+                noticeAdapter.notifyItemRemoved(index);
+                noticeRecyclerView.scrollToPosition(index);
             }
         }
     };

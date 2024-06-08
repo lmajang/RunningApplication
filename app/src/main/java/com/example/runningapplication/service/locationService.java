@@ -13,7 +13,7 @@ import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.maps.model.LatLng;
-import com.example.runningapplication.runningMain.ui.home.HomeFragment;
+import com.example.runningapplication.runningMain.ui.Home.HomeFragment;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

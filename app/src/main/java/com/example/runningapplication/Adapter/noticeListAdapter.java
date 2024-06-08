@@ -29,13 +29,14 @@ import java.util.List;
 
 
 public class noticeListAdapter extends RecyclerView.Adapter<noticeListAdapter.viewHolder>{
-    List<friendNoticeEntity> friendNoticeList;
+    private List<friendNoticeEntity> friendNoticeList;
     private Context mContext;
     private View view;
 
     public noticeListAdapter(List<friendNoticeEntity> friendNoticeList){
         this.friendNoticeList = friendNoticeList;
     }
+
 
     @NonNull
     @Override
@@ -65,7 +66,7 @@ public class noticeListAdapter extends RecyclerView.Adapter<noticeListAdapter.vi
                             jsonObject.put("receiverId", Client.getUserId());
                             String getStatus = httpTools.post(appConfig.ipAddress+"/agreeFriendNotice",jsonObject.toString());
                             Log.d("yeeeeees",getStatus);
-                            friendNoticeListActivity.noticeList.remove(position);
+                            friendNoticeListActivity.handler.obtainMessage(friendNoticeListActivity.DELETE_NOTICE,friendNotice).sendToTarget();
                             view.invalidate();
                         }catch (Exception e){
                             e.printStackTrace();
@@ -86,8 +87,7 @@ public class noticeListAdapter extends RecyclerView.Adapter<noticeListAdapter.vi
                             jsonObject.put("receiverId", Client.getUserId());
                             String getStatus = httpTools.post(appConfig.ipAddress+"/refuseFriendNotice",jsonObject.toString());
                             Log.d("neeeeees",getStatus);
-
-                            friendNoticeListActivity.noticeList.remove(position);
+                            friendNoticeListActivity.handler.obtainMessage(friendNoticeListActivity.DELETE_NOTICE,friendNotice).sendToTarget();
                             view.invalidate();
                         }catch (Exception e){
                             e.printStackTrace();

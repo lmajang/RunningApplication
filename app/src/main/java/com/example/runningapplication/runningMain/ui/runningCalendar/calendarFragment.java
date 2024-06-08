@@ -54,6 +54,8 @@ public class calendarFragment extends Fragment {
 
     private static final int GET_ALL_RUN_RECORD = 1001;
     private static final int GET_ALL_MARKET_RECORD = 1002;
+
+    private static final int GET_SIGN_IN_STATUS = 1003;
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler(Looper.getMainLooper()){
         @Override
@@ -79,6 +81,12 @@ public class calendarFragment extends Fragment {
                     cList.put(calendar.toString(),calendar);
                 }
                 marketAllDate(cList);
+            }else if(msg.what == GET_SIGN_IN_STATUS){
+                if(msg.obj.toString().equals("1")){
+                    signIn.setText("今日已签到");
+                    signIn.setTextColor(Color.WHITE);
+                    signIn.setEnabled(false);
+                }
             }
         }
     };
@@ -132,7 +140,7 @@ public class calendarFragment extends Fragment {
                             }else {
                                 cList.put(marketDate().toString(),marketDate());
                                 marketAllDate(cList);
-                                signIn.setText("已签到");
+                                signIn.setText("今日已签到");
                                 signIn.setTextColor(Color.WHITE);
                                 signIn.setEnabled(false);
                             }
@@ -188,7 +196,24 @@ public class calendarFragment extends Fragment {
             }
         }).start();
 
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("userId",Client.getUserId());
+                    jsonObject.put("year",calendarView.getCurYear());
+                    jsonObject.put("month",calendarView.getCurMonth());
+                    jsonObject.put("day",calendarView.getCurDay());
+                    String now_SignInStatus = httpTools.post(appConfig.ipAddress+"/isCalendarsRecord",jsonObject.toJSONString());
+                    handler.obtainMessage(GET_SIGN_IN_STATUS,now_SignInStatus).sendToTarget();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
 
+
+            }
+        }).start();
 
     }
     private Calendar marketDate(){

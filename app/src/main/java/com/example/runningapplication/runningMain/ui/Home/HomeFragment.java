@@ -1,4 +1,4 @@
-package com.example.runningapplication.runningMain.ui.home;
+package com.example.runningapplication.runningMain.ui.Home;
 
 import android.annotation.SuppressLint;
 import android.app.NotificationManager;
