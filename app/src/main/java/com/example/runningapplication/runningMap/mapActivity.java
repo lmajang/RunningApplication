@@ -44,6 +44,7 @@ import com.example.runningapplication.R;
 import com.example.runningapplication.chatClient.Client;
 import com.example.runningapplication.config.appConfig;
 import com.example.runningapplication.entity.locationEntity;
+import com.example.runningapplication.utils.Tools;
 import com.example.runningapplication.utils.httpTools;
 
 import org.json.simple.JSONObject;
@@ -142,7 +143,23 @@ public class mapActivity extends Activity implements LocationSource, AMapLocatio
                         if (isSuccess.equals("0")){
                             Log.d(TAG,"上传失败");
                         }else {
-                            Toast.makeText(getApplicationContext(),"上传记录成功",Toast.LENGTH_SHORT).show();
+                            Log.d(TAG,"上传成功");
+                            JSONObject object = new JSONObject();
+                            object.put("userId",Client.getUserId());
+                            object.put("run",String.valueOf(ranDistance/1000));
+                            object.put("date", Tools.convertTimestampToDateString(System.currentTimeMillis()));
+                            String isSuc = httpTools.post(appConfig.ipAddress+"/uploadTodayRecord",object.toString());
+                            if (!isSuc.equals("0")){
+                                Log.d(TAG,"上传成功");
+                                handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(getApplicationContext(),"上传记录成功",Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+//
+                            }
+//
                         }
 
                     }catch (Exception e){

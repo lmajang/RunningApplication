@@ -86,6 +86,8 @@ public class calendarFragment extends Fragment {
                     signIn.setText("今日已签到");
                     signIn.setTextColor(Color.WHITE);
                     signIn.setEnabled(false);
+                }else if(msg.obj.toString().equals("2")){
+                    signIn.setVisibility(View.GONE);
                 }
             }
         }
