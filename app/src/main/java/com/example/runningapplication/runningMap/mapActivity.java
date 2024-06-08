@@ -51,6 +51,7 @@ import org.json.simple.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -147,7 +148,12 @@ public class mapActivity extends Activity implements LocationSource, AMapLocatio
                             JSONObject object = new JSONObject();
                             object.put("userId",Client.getUserId());
                             object.put("run",String.valueOf(ranDistance/1000));
-                            object.put("date", Tools.convertTimestampToDateString(System.currentTimeMillis()));
+                            Calendar cd = Calendar.getInstance();
+                            String year= String.valueOf(cd.get(Calendar.YEAR));
+                            String month= String.valueOf(cd.get(Calendar.MONTH)+1);
+                            String day= String.valueOf(cd.get(Calendar.DATE));
+                            String data = year+"/"+month+"/"+day;
+                            object.put("date", data);
                             String isSuc = httpTools.post(appConfig.ipAddress+"/uploadTodayRecord",object.toString());
                             if (!isSuc.equals("0")){
                                 Log.d(TAG,"上传成功");
