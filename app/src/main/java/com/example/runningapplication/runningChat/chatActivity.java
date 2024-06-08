@@ -10,8 +10,6 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,7 +22,6 @@ import com.example.runningapplication.Login.LoginActivity;
 import com.example.runningapplication.R;
 import com.example.runningapplication.chatClient.Client;
 import com.example.runningapplication.chatClient.chatPackage;
-import com.example.runningapplication.chatClient.sendClient;
 import com.example.runningapplication.config.appConfig;
 import com.example.runningapplication.entity.chatEntity;
 import com.example.runningapplication.entity.friendEntity;
@@ -32,7 +29,6 @@ import com.example.runningapplication.entity.singleChatEntity;
 import com.example.runningapplication.utils.httpTools;
 
 import org.json.simple.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +41,7 @@ public class chatActivity extends Activity {
     private TextView sendBtn;
     static private final int INIT_CHAT = 2;
     static friendEntity friend;
+    static String avatarnum;
 
     private static String userId = LoginActivity.sp.getString("id",null);
     private static String username = LoginActivity.sp.getString("username",null);
@@ -62,9 +59,9 @@ public class chatActivity extends Activity {
                     for(singleChatEntity singleChat:sChatList){
                         insertDB.insertChatEntity(friend.getId(),userId,singleChat.getMessage());
                         if(singleChat.getSenderId().equals(Client.getUserId())){
-                            chatMsgList.add(new chatEntity(username,singleChat.getMessage(),chatEntity.SEND));
+                            chatMsgList.add(new chatEntity(username,singleChat.getMessage(),chatEntity.SEND,avatarnum));
                         }else if(singleChat.getReceiverId().equals(Client.getUserId())){
-                            chatMsgList.add(new chatEntity(friend.getUsername(),singleChat.getMessage(),chatEntity.RECEIVE));
+                            chatMsgList.add(new chatEntity(friend.getUsername(),singleChat.getMessage(),chatEntity.RECEIVE,friend.getFriend_hpId()));
                         }
                     }
                 }
@@ -85,6 +82,8 @@ public class chatActivity extends Activity {
         Intent intent = getIntent();
         friend= (friendEntity) intent.getSerializableExtra("data");
         Log.d(TAG, friend.getUsername());
+        avatarnum=intent.getStringExtra("avatar");
+
 //        发送监听器
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,7 +123,7 @@ public class chatActivity extends Activity {
 
 //    发送信息
     private void sendMassage(String msg,boolean newChat){
-        chatEntity chatMsg = new chatEntity(username, msg, chatEntity.SEND);
+        chatEntity chatMsg = new chatEntity(username, msg, chatEntity.SEND,avatarnum);
         if(newChat) chatMsgList.add(chatMsg);
         insertDB.insertChatEntity(userId,friend.getId(),msg);
         adapter.notifyItemInserted(chatMsgList.size() - 1);
@@ -133,7 +132,7 @@ public class chatActivity extends Activity {
 
 //    接收信息
     private static void receiveMassage(String msg,boolean newChat){
-        chatEntity chatMsg = new chatEntity(friend.getUsername(), msg, chatEntity.RECEIVE);
+        chatEntity chatMsg = new chatEntity(friend.getUsername(), msg, chatEntity.RECEIVE,friend.getFriend_hpId());
         if(newChat) chatMsgList.add(chatMsg);
         insertDB.insertChatEntity(friend.getId(),userId,msg);
         if(adapter == null || recyclerView ==null) return;
@@ -180,10 +179,10 @@ public class chatActivity extends Activity {
                 System.out.println(cursor.getString(cursor.getColumnIndexOrThrow("message"))+":"+cursor.getString(cursor.getColumnIndexOrThrow("receiver_id")));
                 if(Client.getUserId().equals(cursor.getString(cursor.getColumnIndexOrThrow("sender_id")))){
 
-                    chatMsgList.add(new chatEntity(username,cursor.getString(cursor.getColumnIndexOrThrow("message")),chatEntity.SEND));
+                    chatMsgList.add(new chatEntity(username,cursor.getString(cursor.getColumnIndexOrThrow("message")),chatEntity.SEND,avatarnum));
                 }else if(friend.getId().equals(cursor.getString(cursor.getColumnIndexOrThrow("sender_id")))){
 
-                    chatMsgList.add(new chatEntity(friend.getUsername(),cursor.getString(cursor.getColumnIndexOrThrow("message")),chatEntity.RECEIVE));
+                    chatMsgList.add(new chatEntity(friend.getUsername(),cursor.getString(cursor.getColumnIndexOrThrow("message")),chatEntity.RECEIVE,friend.getFriend_hpId()));
                 }
             }
             adapter.notifyItemInserted(chatMsgList.size() - 1);

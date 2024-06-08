@@ -40,13 +40,23 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.viewHolder> {
             holder.rightContext.setVisibility(View.VISIBLE);
             holder.rightChatContext.setText(chatMsg.getContext());
             holder.rightName.setText(chatMsg.getUsername());
-            holder.rightHp.setImageResource(R.drawable.img);
+            String avatarnum1=chatMsg.getAvatar();
+            if(avatarnum1.equals("1")) holder.rightHp.setImageResource(R.drawable.avatar1);
+            if(avatarnum1.equals("2")) holder.rightHp.setImageResource(R.drawable.avatar2);
+            if(avatarnum1.equals("3")) holder.rightHp.setImageResource(R.drawable.avatar3);
+            if(avatarnum1.equals("4")) holder.rightHp.setImageResource(R.drawable.avatar4);
+            if(avatarnum1.equals("5")) holder.rightHp.setImageResource(R.drawable.avatar5);
         }else{
             holder.rightContext.setVisibility(View.GONE);
             holder.leftContext.setVisibility(View.VISIBLE);
             holder.leftChatContext.setText(chatMsg.getContext());
             holder.leftName.setText(chatMsg.getUsername());
-            holder.leftHp.setImageResource(R.drawable.img);
+            String avatarnum2=chatMsg.getAvatar();
+            if(avatarnum2.equals("1")) holder.leftHp.setImageResource(R.drawable.avatar1);
+            if(avatarnum2.equals("2")) holder.leftHp.setImageResource(R.drawable.avatar2);
+            if(avatarnum2.equals("3")) holder.leftHp.setImageResource(R.drawable.avatar3);
+            if(avatarnum2.equals("4")) holder.leftHp.setImageResource(R.drawable.avatar4);
+            if(avatarnum2.equals("5")) holder.leftHp.setImageResource(R.drawable.avatar5);
         }
     }
 

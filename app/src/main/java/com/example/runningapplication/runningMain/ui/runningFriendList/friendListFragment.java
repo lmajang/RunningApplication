@@ -34,7 +34,6 @@ import com.example.runningapplication.Login.LoginActivity;
 import com.example.runningapplication.R;
 import com.example.runningapplication.config.appConfig;
 import com.example.runningapplication.entity.friendEntity;
-import com.example.runningapplication.runningChat.chatActivity;
 import com.example.runningapplication.runningFriend.friendActivity;
 import com.example.runningapplication.utils.httpTools;
 

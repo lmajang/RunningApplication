@@ -165,12 +165,30 @@ public class friendActivity extends Activity {
         btn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent();
-                intent.setClass(friendActivity.this, chatActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                friendEntity friend=new friendEntity(receiverid,avatarnum,receivername);
-                intent.putExtra("data", friend);
-                startActivity(intent);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            FormBody formBody = new FormBody.Builder().add("id", senderid).build();
+                            OkHttpClient client = new OkHttpClient();
+                            Request request = new Request.Builder()
+                                    .url(appConfig.ipAddress+"/user6")
+                                    .post(formBody)
+                                    .build();
+                            Response response = client.newCall(request).execute();
+                            final String responseData = response.body().string();
+                            Intent intent = new Intent();
+                            intent.setClass(friendActivity.this, chatActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            friendEntity friend=new friendEntity(receiverid,avatarnum,receivername);
+                            intent.putExtra("data", friend);
+                            intent.putExtra("avatar",responseData);
+                            startActivity(intent);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
             }
         });
     }
