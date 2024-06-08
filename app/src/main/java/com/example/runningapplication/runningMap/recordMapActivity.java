@@ -83,6 +83,7 @@ public class recordMapActivity extends Activity {
                 MovingPointOverlay smoothMarker = new MovingPointOverlay(aMap,marker);
                 // 取轨迹点的第一个点 作为 平滑移动的启动
                 LatLng drivePoint = points.get(0);
+                aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(drivePoint,aMap.getMaxZoomLevel()-3));
                 Pair<Integer, LatLng> pair = SpatialRelationUtil.calShortestDistancePoint(points, drivePoint);
                 points.set(pair.first, drivePoint);
                 aMap.addPolyline(new PolylineOptions().
