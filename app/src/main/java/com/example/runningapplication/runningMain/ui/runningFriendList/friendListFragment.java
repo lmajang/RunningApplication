@@ -248,7 +248,7 @@ public class friendListFragment extends Fragment {
             public void run() {
                 try {
                     String getFriendListJson = httpTools.post(url,json.toString());
-                    if(getFriendListJson!=null){
+                    if(!getFriendListJson.isEmpty()){
                         handle.obtainMessage(UPDATE_RE,getFriendListJson).sendToTarget();
                         List<friendEntity> fList = JSON.parseArray(getFriendListJson, friendEntity.class);
                         for(friendEntity friend:fList){

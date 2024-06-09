@@ -2,6 +2,7 @@ package com.example.runningapplication.runningMap;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -50,7 +51,7 @@ public class recordMapActivity extends Activity {
     private TextView record_tvMileage;
     private TextView record_tvSpeed;
     private TextView record_cadence;
-
+    private LatLngBounds bounds;
     private static final String TAG = "recordMapActivity";
 
     @Override
@@ -71,31 +72,41 @@ public class recordMapActivity extends Activity {
         record_tvMileage.setText(String.format("%.2f", Float.parseFloat(runRecord.getRanDistance())));
         record_tvSpeed.setText(String.format("%.2f", Double.parseDouble(runRecord.getSpeed())));
         record_cadence.setText(runRecord.getCadence());
+
         new Thread(new Runnable() {
             @Override
             public void run() {
                 initLatLngs(runRecord.getRunLine());
-                LatLngBounds bounds = new LatLngBounds(points.get(0), points.get(points.size() - 2));
-                aMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds,50));
-                Marker marker = aMap.addMarker(new MarkerOptions()
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_location))
-                        .anchor(0.5f,0.5f));
-                MovingPointOverlay smoothMarker = new MovingPointOverlay(aMap,marker);
                 // 取轨迹点的第一个点 作为 平滑移动的启动
                 LatLng drivePoint = points.get(0);
-                aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(drivePoint,aMap.getMaxZoomLevel()-3));
-                Pair<Integer, LatLng> pair = SpatialRelationUtil.calShortestDistancePoint(points, drivePoint);
-                points.set(pair.first, drivePoint);
-                aMap.addPolyline(new PolylineOptions().
-                        addAll(points).width(10).color(Color.argb(255, 1, 1, 1)));
+                if (points.size()>=2){
+                    bounds = new LatLngBounds(points.get(0), points.get(points.size() - 2));
+                    aMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds,50));
+                    Marker marker = aMap.addMarker(new MarkerOptions()
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_location))
+                            .anchor(0.5f,0.5f));
+                    MovingPointOverlay smoothMarker = new MovingPointOverlay(aMap,marker);
 
-                List<LatLng> subList = points.subList(pair.first, points.size());
-                // 设置轨迹点
-                smoothMarker.setPoints(subList);
+                    aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(drivePoint,aMap.getMaxZoomLevel()-3));
+                    Pair<Integer, LatLng> pair = SpatialRelationUtil.calShortestDistancePoint(points, drivePoint);
+                    points.set(pair.first, drivePoint);
+                    aMap.addPolyline(new PolylineOptions().
+                            addAll(points).width(10).color(Color.argb(255, 1, 1, 1)));
+
+                    List<LatLng> subList = points.subList(pair.first, points.size());
+                    // 设置轨迹点
+                    smoothMarker.setPoints(subList);
 // 设置平滑移动的总时间  单位  秒
-                smoothMarker.setTotalDuration(30);
+                    smoothMarker.setTotalDuration(30);
 // 开始移动
-                smoothMarker.startSmoothMove();
+                    smoothMarker.startSmoothMove();
+                }else {
+                    aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(drivePoint,aMap.getMaxZoomLevel()-3));
+                    MarkerOptions markerOption = new MarkerOptions();
+                    markerOption.position(drivePoint);
+//
+                    aMap.addMarker(markerOption);
+                }
             }
         }).start();
 
