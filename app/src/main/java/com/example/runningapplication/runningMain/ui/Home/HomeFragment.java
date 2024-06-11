@@ -1,4 +1,4 @@
-package com.example.runningapplication.runningMain.ui.Home;
+package com.example.runningapplication.runningMain.ui.home;
 
 import android.annotation.SuppressLint;
 import android.app.NotificationManager;
@@ -131,7 +131,7 @@ public class HomeFragment extends Fragment {
                             .build();
                     Response response = client.newCall(request).execute();
                     final String responseData = response.body().string();
-                    run=responseData;
+                    run=String.format("%.2f", Float.parseFloat(responseData));
                     while(target.equals("")){}
                     text.setText("当前已跑:\n"+run+"公里/"+target+"公里");
                     // 设置圆环统计图的两个部分的百分比
@@ -174,7 +174,7 @@ public class HomeFragment extends Fragment {
                         ,new QWeather.OnResultGeoListener(){
                             @Override
                             public void onError(Throwable throwable) {
-                                Log.i("123", "Weather Now onError: ",throwable);
+                                Log.i("123", "Weather Now onError1: "+throwable);
                             }
 
                             @Override
@@ -205,7 +205,7 @@ public class HomeFragment extends Fragment {
                         new QWeather.OnResultWeatherNowListener() {
                             @Override
                             public void onError(Throwable e) {
-                                Log.i("123", "Weather Now onError: ", e);
+                                Log.i("123", "Weather Now onError2: ", e);
                             }
 
                             @Override
