@@ -1,5 +1,7 @@
 package com.example.runningapplication.chatClient;
 
+import android.util.Log;
+
 import org.json.simple.JSONObject;
 
 import java.io.ObjectOutputStream;
@@ -18,7 +20,15 @@ public class heartClient implements Runnable{
     public void run(){
         try {
             while(!Thread.currentThread().isInterrupted()){
-                Thread.sleep(10*1000);
+                long startTime = System.currentTimeMillis();
+                long endTime = startTime + 10 * 1000; // 10 seconds later
+
+                while (System.currentTimeMillis() < endTime){}
+//                Thread.sleep(10*1000);
+                Log.d("statustest",String.valueOf(Thread.currentThread().isInterrupted()));
+                if(Thread.currentThread().isInterrupted()) {
+                    break;
+                }
                 JSONObject json = new JSONObject();
                 json.put("type", "heart");
                 json.put("msg", "123 checking connecting status");

@@ -3,9 +3,15 @@ package com.example.runningapplication.runningMap;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
@@ -18,6 +24,7 @@ import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
@@ -49,11 +56,17 @@ import com.example.runningapplication.utils.httpTools;
 
 import org.json.simple.JSONObject;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import tech.gujin.toast.ToastUtil;
 
 public class mapActivity extends Activity implements LocationSource, AMapLocationListener {
     private MapView mMapView = null;
@@ -76,6 +89,7 @@ public class mapActivity extends Activity implements LocationSource, AMapLocatio
 
     private TextView tvSpeed;
 
+    private TextView map_share_btn;
 
     private float ranDistance = 0;
 
@@ -104,6 +118,7 @@ public class mapActivity extends Activity implements LocationSource, AMapLocatio
 
     private long downTime;
 
+    private static final int MAP_SHARE = 10001;
     AMapLocation run_location;
     private static final int LONG_PRESS_THRESHOLD = 3000;//长按时间
 
@@ -155,11 +170,13 @@ public class mapActivity extends Activity implements LocationSource, AMapLocatio
                             String data = year+"/"+month+"/"+day;
                             object.put("date", data);
                             String isSuc = httpTools.post(appConfig.ipAddress+"/uploadTodayRecord",object.toString());
+                            Log.d(TAG,isSuc);
                             if (!isSuc.equals("0")){
                                 Log.d(TAG,"上传成功");
                                 handler.post(new Runnable() {
                                     @Override
                                     public void run() {
+                                        map_share_btn.setVisibility(View.VISIBLE);
                                         Toast.makeText(getApplicationContext(),"上传记录成功",Toast.LENGTH_SHORT).show();
                                     }
                                 });
@@ -192,7 +209,8 @@ public class mapActivity extends Activity implements LocationSource, AMapLocatio
     private String[] permissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION
             , Manifest.permission.ACCESS_COARSE_LOCATION
             , Manifest.permission.ACCESS_BACKGROUND_LOCATION
-            , Manifest.permission.ACCESS_LOCATION_EXTRA_COMMANDS};
+            , Manifest.permission.ACCESS_LOCATION_EXTRA_COMMANDS
+            , Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     private static final int OPEN_SET_REQUEST_CODE = 100;
 
@@ -228,18 +246,8 @@ public class mapActivity extends Activity implements LocationSource, AMapLocatio
         aMap.setMyLocationEnabled(true);
         aMap.setMyLocationType(MyLocationStyle.LOCATION_TYPE_FOLLOW);
         aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(39.999391,116.135972),aMap.getMaxZoomLevel()));
-// 绘画路线
-//        new Thread(() -> {
-//            while (true){
-//                aMap.addPolyline(new PolylineOptions().
-//                        addAll(latLngs).width(10).color(Color.argb(255, 1, 1, 1)));
-//                try {
-//                    Thread.sleep(2000);
-//                } catch (InterruptedException e) {
-//                    throw new RuntimeException(e);
-//                }
-//            }
-//        }).start();
+
+
 
     }
     @Override
@@ -263,6 +271,7 @@ public class mapActivity extends Activity implements LocationSource, AMapLocatio
         //在activity执行onPause时执行mMapView.onPause ()，暂停地图的绘制
         mMapView.onPause();
     }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -390,6 +399,8 @@ public class mapActivity extends Activity implements LocationSource, AMapLocatio
 
         tvSpeed = (TextView) findViewById(R.id.tvSpeed);
 
+        map_share_btn = (TextView)findViewById(R.id.map_share_btn);
+
         runningEndBtn.setProgressFormatter(new MyProgressFormatter());
 
         runningEndBtn.setMax(LONG_PRESS_THRESHOLD);
@@ -454,6 +465,89 @@ public class mapActivity extends Activity implements LocationSource, AMapLocatio
                         break;
                 }
                 return true;
+            }
+        });
+
+        map_share_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /**
+                 * 对地图进行截屏
+                 */
+                aMap.getMapScreenShot(new AMap.OnMapScreenShotListener() {
+                    @Override
+                    public void onMapScreenShot(Bitmap bitmap) {
+
+                    }
+
+                    @Override
+                    public void onMapScreenShot(Bitmap bitmap, int status) {
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+                        if(null == bitmap){
+                            return;
+                        }
+                        try {
+                            String PATH = getApplicationContext().getExternalFilesDir(null).getPath()+"/Pictures" + "/MapScreenShot_"
+                                    + sdf.format(new Date()) + ".png";
+                            // 构建 Pictures 目录的路径
+                            File picturesDir = new File(getApplicationContext().getExternalFilesDir(null).getPath(), "Pictures");
+                            if(!picturesDir.exists()){
+                                if(!picturesDir.mkdirs()){
+                                    Log.e(TAG, "Failed to create Pictures directory");
+                                }
+                            }
+
+                            FileOutputStream fos = new FileOutputStream(PATH);
+                            boolean b = bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                            try {
+                                fos.flush();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            try {
+                                fos.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            StringBuffer buffer = new StringBuffer();
+                            if (b){
+                                File file = new File(PATH);
+                                Uri uri;
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                    // 使用FileProvider来创建URI
+                                    uri = FileProvider.getUriForFile(getApplicationContext(), "com.example.runningapplication.fileprovider", file);
+                                } else {
+                                    // 对于Android 6.0及更低版本
+                                    uri = Uri.fromFile(file);
+                                }
+                                Log.d(TAG,uri.getPath());
+                                // 创建分享Intent
+                                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                                shareIntent.setType("image/png"); // 设置数据类型为图片
+                                shareIntent.putExtra(Intent.EXTRA_STREAM, uri); // 添加图片URI到Intent
+                                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION); // 允许接收方读取URI
+                                shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                // 启动Intent选择器
+                                startActivity(Intent.createChooser(shareIntent, "Share image"));
+                                buffer.append("截屏成功 ");
+                            }
+                            else {
+                                buffer.append("截屏失败 ");
+                            }
+//                    ToastUtil.show(getApplicationContext(), buffer.toString());
+                            ToastUtil.initialize(getApplicationContext());
+                            ToastUtil.show(buffer.toString());
+
+
+
+                        } catch (Exception e) {
+                            Log.d(TAG,"error");
+                            Log.d(TAG,Environment.getExternalStorageDirectory().getAbsoluteFile().getPath());
+                            e.printStackTrace();
+                        }
+
+                    }
+                });
             }
         });
     }

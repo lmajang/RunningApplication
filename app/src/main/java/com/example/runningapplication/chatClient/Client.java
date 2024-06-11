@@ -60,12 +60,17 @@ public class Client {
 //            listenClientThread.start();
 //            保持连接
             while (!Thread.currentThread().isInterrupted()){
+                Log.d("socketStatus","connect");
                     json = (JSONObject)ois.readObject();
                     if(json.get("type").equals("chat")){
                         String msg = (String) json.get("msg");
                         chatActivity.mainHandler.obtainMessage(1,msg).sendToTarget();
                         Log.d("receiveMsg", msg);
-                }
+                }else if(json.get("type").equals("disConnectStatus")){
+                        heartClientThread.interrupt();
+                        Log.d("socketStatus","disconnect");
+                        break;
+                    }
             }
         }catch (Exception e){
             e.printStackTrace();
