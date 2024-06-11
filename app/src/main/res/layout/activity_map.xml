@@ -164,6 +164,17 @@
                 />
 
         </LinearLayout>
+        <TextView
+            android:id="@+id/map_share_btn"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@drawable/map_runend_btn"
+            android:textSize="25dp"
+            android:text="分享"
+            android:gravity="center"
+            android:padding="5dp"
+            android:visibility="gone"
+            />
 
     </LinearLayout>
 

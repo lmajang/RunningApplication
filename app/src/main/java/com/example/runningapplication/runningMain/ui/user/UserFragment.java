@@ -193,6 +193,9 @@ public class UserFragment extends Fragment {
                             }
                         }
                     }).start();
+                    SharedPreferences.Editor editor = sp.edit();
+                    editor.clear();
+                    editor.commit();
                     Intent intent = new Intent();
                     intent.setClass(view.getContext(), LoginActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);

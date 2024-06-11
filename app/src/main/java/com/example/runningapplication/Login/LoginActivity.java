@@ -44,8 +44,15 @@ public class LoginActivity extends Activity {
         btnreg = this.findViewById(R.id.Sign_up);               //注册按钮
 
         sp = this.getSharedPreferences("user", this.MODE_PRIVATE);
-
+        Intent serviceSocketIntent = new Intent(LoginActivity.this, chatSocketService.class);
         name.setText(sp.getString("mail", null));
+        if(sp.getString("id",null)!=null){
+            startService(serviceSocketIntent);
+            Intent intent = new Intent();
+            intent.setClass(LoginActivity.this, runningMainActivity.class);            //设置页面跳转
+            startActivity(intent);
+            finish();
+        }
         btnlogin.setOnClickListener(new View.OnClickListener() {                //登录事件
             @Override
             public void onClick(View v) {
@@ -73,7 +80,6 @@ public class LoginActivity extends Activity {
                                         public void run() {
                                             Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
                                             Intent intent = new Intent();
-                                            Intent serviceSocketIntent = new Intent(LoginActivity.this, chatSocketService.class);
                                             intent.setClass(LoginActivity.this, runningMainActivity.class);            //设置页面跳转
                                             SharedPreferences.Editor editor = sp.edit();
                                             String id = "",name="",target;
@@ -93,6 +99,7 @@ public class LoginActivity extends Activity {
                                             //String loginname = cursor.getString(0);
                                             startService(serviceSocketIntent);
                                             startActivity(intent);
+                                            finish();
                                         }
                                     });
                                 }

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">RunningApplication</string>
+    <string name="app_name">跑步世界校园</string>
     <string name="title_activity_running_main">runningMainActivity</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
