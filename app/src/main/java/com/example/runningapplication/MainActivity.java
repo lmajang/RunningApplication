@@ -5,9 +5,11 @@ import static com.example.runningapplication.DB.SQLStatements.createChatTB;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.example.runningapplication.Login.LoginActivity;
 import com.example.runningapplication.DB.MyDBOpenHelper;
@@ -25,11 +27,13 @@ public class MainActivity extends Activity {
 
         SQLiteOpenHelper dbHelper = new MyDBOpenHelper(this);
         appConfig.sqLiteDatabase = dbHelper.getWritableDatabase();
-////        创建聊天系统线程
 
 
         Intent i = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(i);
+        finish();
+
+
 
 //        Intent i = new Intent(MainActivity.this, mapActivity.class);
 //        startActivity(i);
