@@ -1,21 +1,14 @@
 package com.example.runningapplication;
 
 
-import static com.example.runningapplication.DB.SQLStatements.createChatTB;
-
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.example.runningapplication.Login.LoginActivity;
 import com.example.runningapplication.DB.MyDBOpenHelper;
-import com.example.runningapplication.chatClient.Client;
 import com.example.runningapplication.config.appConfig;
-import com.example.runningapplication.runningMain.runningMainActivity;
 import com.example.runningapplication.runningMap.mapActivity;
 
 public class MainActivity extends Activity {

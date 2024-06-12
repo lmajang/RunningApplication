@@ -124,7 +124,7 @@ public class friendActivity extends Activity {
                     final String responseData = response.body().string();
                     run=responseData;
                     while(target.equals("")){}
-                    textView3.setText("今日已跑:\n"+run+"公里/"+target+"公里");
+                    textView3.setText("今日已跑:\n"+String.format("%.2f", Float.parseFloat(run))+"公里/"+target+"公里");
                     // 设置圆环统计图的两个部分的百分比
                     circularStatView.setPercentage((float) (Double.parseDouble(run)/Double.parseDouble(target))*100);
                 }catch (Exception e) {

@@ -44,7 +44,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".runningMap.mapActivity" />
+        <activity android:name="drawable.runningMap.mapActivity" />
         <activity android:name=".runningChat.chatActivity" />
         <activity android:name=".Login.LoginActivity"  />
         <activity android:name=".Login.RegisterActivity"/>
@@ -53,7 +53,7 @@
         <activity android:name=".runningFriend.friendActivity" />
         <activity android:name=".runningMain.runningMainActivity"/>
         <activity android:name=".runningFriend.friendNoticeListActivity"/>
-        <activity android:name=".runningMap.recordMapActivity"/>
+        <activity android:name="drawable.runningMap.recordMapActivity"/>
         <service android:name="com.amap.api.location.APSService" />
         <service android:name=".service.chatSocketService"/>
         <service android:name=".service.locationService"/>
