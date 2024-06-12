@@ -2,8 +2,6 @@ package com.example.runningapplication.chatClient;
 
 import android.util.Log;
 
-import com.example.runningapplication.runningChat.chatActivity;
-
 import org.json.JSONObject;
 
 import java.io.ObjectInputStream;

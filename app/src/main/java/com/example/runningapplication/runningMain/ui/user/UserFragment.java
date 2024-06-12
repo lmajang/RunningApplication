@@ -28,7 +28,6 @@ import com.example.runningapplication.runningFriend.friendNoticeListActivity;
 import com.example.runningapplication.runningMain.runningMainActivity;
 import com.example.runningapplication.utils.httpTools;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import okhttp3.FormBody;
@@ -69,6 +68,7 @@ public class UserFragment extends Fragment {
         sp = this.getActivity().getSharedPreferences("user", this.getActivity().MODE_PRIVATE);
         String id=sp.getString("id",null);
         String name=sp.getString("username",null);
+        String mail=sp.getString("mail",null);
         progressBar.setProgress(75);
         new Thread(new Runnable() {
             @Override
@@ -195,6 +195,8 @@ public class UserFragment extends Fragment {
                     }).start();
                     SharedPreferences.Editor editor = sp.edit();
                     editor.clear();
+                    editor.commit();
+                    editor.putString("mail",mail);
                     editor.commit();
                     Intent intent = new Intent();
                     intent.setClass(view.getContext(), LoginActivity.class);
